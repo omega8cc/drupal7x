@@ -1,9 +1,4 @@
 
-Drupal 7.15, xxxx-xx-xx (development version)
------------------------
-
-
-
 Drupal 7.14 2012-05-02
 ----------------------
 - Fixed "integrity constraint" fatal errors when rebuilding registry.
