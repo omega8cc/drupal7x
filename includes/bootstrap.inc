@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.14');
+define('VERSION', '7.16-dev');
 
 /**
  * Core API compatibility.
@@ -1747,22 +1747,37 @@ function watchdog($type, $message, $variables = array(), $severity = WATCHDOG_NO
 }
 
 /**
- * Sets a message which reflects the status of the performed operation.
+ * Sets a message to display to the user.
  *
- * If the function is called with no arguments, this function returns all set
- * messages without clearing them.
+ * Messages are stored in a session variable and displayed in page.tpl.php via
+ * the $messages theme variable.
  *
- * @param $message
- *   The message to be displayed to the user. For consistency with other
- *   messages, it should begin with a capital letter and end with a period.
- * @param $type
- *   The type of the message. One of the following values are possible:
+ * Example usage:
+ * @code
+ * drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
+ * @endcode
+ *
+ * @param string $message
+ *   (optional) The translated message to be displayed to the user. For
+ *   consistency with other messages, it should begin with a capital letter and
+ *   end with a period.
+ * @param string $type
+ *   (optional) The message's type. Defaults to 'status'. These values are
+ *   supported:
  *   - 'status'
  *   - 'warning'
  *   - 'error'
- * @param $repeat
- *   If this is FALSE and the message is already set, then the message won't
- *   be repeated.
+ * @param bool $repeat
+ *   (optional) If this is FALSE and the message is already set, then the
+ *   message won't be repeated. Defaults to TRUE.
+ *
+ * @return array|null
+ *   A multidimensional array with keys corresponding to the set message types.
+ *   The indexed array values of each contain the set messages for that type.
+ *   Or, if there are no messages set, the function returns NULL.
+ *
+ * @see drupal_get_messages()
+ * @see theme_status_messages()
  */
 function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE) {
   if ($message) {
@@ -2100,14 +2115,26 @@ function drupal_anonymous_user() {
 /**
  * Ensures Drupal is bootstrapped to the specified phase.
  *
- * The bootstrap phase is an integer constant identifying a phase of Drupal
- * to load. Each phase adds to the previous one, so invoking a later phase
- * automatically runs the earlier phases as well. To access the Drupal
- * database from a script without loading anything else, include bootstrap.inc
- * and call drupal_bootstrap(DRUPAL_BOOTSTRAP_DATABASE).
+ * In order to bootstrap Drupal from another PHP script, you can use this code:
+ * @code
+ *   define('DRUPAL_ROOT', '/path/to/drupal');
+ *   require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+ *   drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+ * @endcode
  *
  * @param $phase
- *   A constant. Allowed values are the DRUPAL_BOOTSTRAP_* constants.
+ *   A constant telling which phase to bootstrap to. When you bootstrap to a
+ *   particular phase, all earlier phases are run automatically. Possible
+ *   values:
+ *   - DRUPAL_BOOTSTRAP_CONFIGURATION: Initializes configuration.
+ *   - DRUPAL_BOOTSTRAP_PAGE_CACHE: Tries to serve a cached page.
+ *   - DRUPAL_BOOTSTRAP_DATABASE: Initializes the database layer.
+ *   - DRUPAL_BOOTSTRAP_VARIABLES: Initializes the variable system.
+ *   - DRUPAL_BOOTSTRAP_SESSION: Initializes session handling.
+ *   - DRUPAL_BOOTSTRAP_PAGE_HEADER: Sets up the page header.
+ *   - DRUPAL_BOOTSTRAP_LANGUAGE: Finds out the language of the page.
+ *   - DRUPAL_BOOTSTRAP_FULL: Fully loads Drupal. Validates and fixes input
+ *     data.
  * @param $new_phase
  *   A boolean, set to FALSE if calling drupal_bootstrap from inside a
  *   function called from drupal_bootstrap (recursion).
@@ -2699,7 +2726,7 @@ function request_path() {
     return $path;
   }
 
-  if (isset($_GET['q'])) {
+  if (isset($_GET['q']) && is_string($_GET['q'])) {
     // This is a request with a ?q=foo/bar query string. $_GET['q'] is
     // overwritten in drupal_path_initialize(), but request_path() is called
     // very early in the bootstrap process, so the original value is saved in
@@ -2830,7 +2857,7 @@ function ip_address() {
 }
 
 /**
- * @ingroup schemaapi
+ * @addtogroup schemaapi
  * @{
  */
 
@@ -2952,12 +2979,12 @@ function drupal_get_complete_schema($rebuild = FALSE) {
 }
 
 /**
- * @} End of "ingroup schemaapi".
+ * @} End of "addtogroup schemaapi".
  */
 
 
 /**
- * @ingroup registry
+ * @addtogroup registry
  * @{
  */
 
@@ -3119,7 +3146,7 @@ function registry_update() {
 }
 
 /**
- * @} End of "ingroup registry".
+ * @} End of "addtogroup registry".
  */
 
 /**
