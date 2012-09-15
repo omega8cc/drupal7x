@@ -323,8 +323,8 @@ function taxonomy_menu() {
   );
 
   $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name'] = array(
-    'title callback' => 'taxonomy_admin_vocabulary_title_callback',
-    'title arguments' => array(3),
+    'title callback' => 'entity_label',
+    'title arguments' => array('taxonomy_vocabulary', 3),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('taxonomy_overview_terms', 3),
     'access arguments' => array('administer taxonomy'),
@@ -375,7 +375,13 @@ function taxonomy_term_edit_access($term) {
 }
 
 /**
- * Return the vocabulary name given the vocabulary object.
+ * Returns the sanitized name of a vocabulary.
+ *
+ * Deprecated. This function was previously used as a menu item title callback
+ * but has been replaced by using entity_label() (which does not
+ * sanitize the title, since the menu system does that automatically). In
+ * Drupal 7, use that function for title callbacks, and call check_plain()
+ * directly if you need a sanitized title.
  */
 function taxonomy_admin_vocabulary_title_callback($vocabulary) {
   return check_plain($vocabulary->name);
@@ -386,7 +392,8 @@ function taxonomy_admin_vocabulary_title_callback($vocabulary) {
  *
  * @param $vocabulary
  *   A vocabulary object with the following properties:
- *   - vid: The ID of the vocabulary.
+ *   - vid: (optional) The ID of the vocabulary (omit if creating a new
+ *     vocabulary; only use to update an existing vocabulary).
  *   - name: The human-readable name of the vocabulary.
  *   - machine_name: The machine name of the vocabulary.
  *   - description: (optional) The vocabulary's description.
@@ -401,7 +408,7 @@ function taxonomy_admin_vocabulary_title_callback($vocabulary) {
  *
  * @return
  *   Status constant indicating whether the vocabulary was inserted (SAVED_NEW)
- *   or updated(SAVED_UPDATED).
+ *   or updated (SAVED_UPDATED).
  */
 function taxonomy_vocabulary_save($vocabulary) {
   // Prevent leading and trailing spaces in vocabulary names.
@@ -1000,8 +1007,8 @@ function taxonomy_get_tree($vid, $parent = 0, $max_depth = NULL, $load_entities 
   $parents = &drupal_static(__FUNCTION__ . ':parents', array());
   $terms = &drupal_static(__FUNCTION__ . ':terms', array());
 
-  // We cache trees, so it's not CPU-intensive to call get_tree() on a term
-  // and its children, too.
+  // We cache trees, so it's not CPU-intensive to call taxonomy_get_tree() on a
+  // term and its children, too.
   if (!isset($children[$vid])) {
     $children[$vid] = array();
     $parents[$vid] = array();
@@ -1914,7 +1921,7 @@ function taxonomy_taxonomy_term_delete($term) {
  * Converts EntityFieldQuery instances on taxonomy terms that have an entity
  * condition on term bundles (vocabulary machine names). Since the vocabulary
  * machine name is not present in the {taxonomy_term_data} table itself, we have
- * to convert the bundle condition into a proprety condition of vocabulary IDs
+ * to convert the bundle condition into a property condition of vocabulary IDs
  * to match against {taxonomy_term_data}.vid.
  */
 function taxonomy_entity_query_alter($query) {

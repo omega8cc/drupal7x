@@ -810,7 +810,6 @@ function system_schema() {
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-        'binary' => TRUE,
       ),
       'uri' => array(
         'description' => 'The URI to access the file (either local or remote).',
@@ -1711,17 +1710,18 @@ function system_update_dependencies() {
 function system_update_7000() {
   $result = db_query("SELECT rid, perm FROM {permission} ORDER BY rid");
   foreach ($result as $role) {
-    $renamed_permission = preg_replace('/(?<=^|,\ )create\ blog\ entries(?=,|$)/', 'create blog content', $role->perm);
-    $renamed_permission = preg_replace('/(?<=^|,\ )edit\ own\ blog\ entries(?=,|$)/', 'edit own blog content', $role->perm);
-    $renamed_permission = preg_replace('/(?<=^|,\ )edit\ any\ blog\ entry(?=,|$)/', 'edit any blog content', $role->perm);
-    $renamed_permission = preg_replace('/(?<=^|,\ )delete\ own\ blog\ entries(?=,|$)/', 'delete own blog content', $role->perm);
-    $renamed_permission = preg_replace('/(?<=^|,\ )delete\ any\ blog\ entry(?=,|$)/', 'delete any blog content', $role->perm);
+    $renamed_permission = $role->perm;
+    $renamed_permission = preg_replace('/(?<=^|,\ )create\ blog\ entries(?=,|$)/', 'create blog content', $renamed_permission);
+    $renamed_permission = preg_replace('/(?<=^|,\ )edit\ own\ blog\ entries(?=,|$)/', 'edit own blog content', $renamed_permission);
+    $renamed_permission = preg_replace('/(?<=^|,\ )edit\ any\ blog\ entry(?=,|$)/', 'edit any blog content', $renamed_permission);
+    $renamed_permission = preg_replace('/(?<=^|,\ )delete\ own\ blog\ entries(?=,|$)/', 'delete own blog content', $renamed_permission);
+    $renamed_permission = preg_replace('/(?<=^|,\ )delete\ any\ blog\ entry(?=,|$)/', 'delete any blog content', $renamed_permission);
 
-    $renamed_permission = preg_replace('/(?<=^|,\ )create\ forum\ topics(?=,|$)/', 'create forum content', $role->perm);
-    $renamed_permission = preg_replace('/(?<=^|,\ )delete\ any\ forum\ topic(?=,|$)/', 'delete any forum content', $role->perm);
-    $renamed_permission = preg_replace('/(?<=^|,\ )delete\ own\ forum\ topics(?=,|$)/', 'delete own forum content', $role->perm);
-    $renamed_permission = preg_replace('/(?<=^|,\ )edit\ any\ forum\ topic(?=,|$)/', 'edit any forum content', $role->perm);
-    $renamed_permission = preg_replace('/(?<=^|,\ )edit\ own\ forum\ topics(?=,|$)/', 'edit own forum content', $role->perm);
+    $renamed_permission = preg_replace('/(?<=^|,\ )create\ forum\ topics(?=,|$)/', 'create forum content', $renamed_permission);
+    $renamed_permission = preg_replace('/(?<=^|,\ )delete\ any\ forum\ topic(?=,|$)/', 'delete any forum content', $renamed_permission);
+    $renamed_permission = preg_replace('/(?<=^|,\ )delete\ own\ forum\ topics(?=,|$)/', 'delete own forum content', $renamed_permission);
+    $renamed_permission = preg_replace('/(?<=^|,\ )edit\ any\ forum\ topic(?=,|$)/', 'edit any forum content', $renamed_permission);
+    $renamed_permission = preg_replace('/(?<=^|,\ )edit\ own\ forum\ topics(?=,|$)/', 'edit own forum content', $renamed_permission);
 
     if ($renamed_permission != $role->perm) {
       db_update('permission')
@@ -2958,8 +2958,9 @@ function system_update_7069() {
  */
 
 /**
- * @defgroup updates-7.x-extra Extra system updates for 7.x
+ * @defgroup updates-7.x-extra Extra updates for 7.x
  * @{
+ * Update functions between 7.x versions.
  */
 
 /**
@@ -3022,6 +3023,67 @@ function system_update_7074() {
   // This update function previously converted menu_links query strings to
   // arrays. It has been removed for now due to incompatibility with
   // PostgreSQL.
+}
+
+/**
+ * Fix renamed queries from system_update_7000().
+ */
+function system_update_7075() {
+  $permission_changes = array(
+    'create blog entries' => 'create blog content',
+    'edit own blog entries' => 'edit own blog content',
+    'edit any blog entry' => 'edit any blog content',
+    'delete own blog entries' => 'delete own blog content',
+    'delete any blog entry' => 'delete any blog content',
+
+    'create forum topics' => 'create forum content',
+    'edit own forum topics' => 'edit own forum content',
+    'edit any forum topic' => 'edit any forum content',
+    'delete own forum topics' => 'delete own forum content',
+    'delete any forum topic' => 'delete any forum content',
+  );
+
+  foreach ($permission_changes as $permission_key => $permission_change) {
+    db_update('role_permission')
+      ->fields(array('permission' => $permission_change))
+      ->condition('permission', $permission_key)
+      ->execute();
+  }
+}
+
+/**
+ * Convert menu_links query strings into arrays.
+ */
+function system_update_7076() {
+  $query = db_select('menu_links', 'ml', array('fetch' => PDO::FETCH_ASSOC))
+    ->fields('ml', array('mlid', 'options'));
+  foreach ($query->execute() as $menu_link) {
+    if (strpos($menu_link['options'], 'query') !== FALSE) {
+      $menu_link['options'] = unserialize($menu_link['options']);
+      if (isset($menu_link['options']['query']) && is_string($menu_link['options']['query'])) {
+        $menu_link['options']['query'] = drupal_get_query_array($menu_link['options']['query']);
+        db_update('menu_links')
+          ->fields(array(
+            'options' => serialize($menu_link['options']),
+          ))
+          ->condition('mlid', $menu_link['mlid'], '=')
+          ->execute();
+      }
+    }
+  }
+}
+
+/**
+ * Revert {file_managed}.filename changed to a binary column.
+ */
+function system_update_7077() {
+  db_change_field('file_managed', 'filename', 'filename', array(
+    'description' => 'Name of the file with no path components. This may differ from the basename of the URI if the file is renamed to avoid overwriting an existing file.',
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+  ));
 }
 
 /**

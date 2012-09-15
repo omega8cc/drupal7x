@@ -1,4 +1,21 @@
 
+Drupal 7.16, xxxx-xx-xx (development version)
+-----------------------
+- Fixed double occurrence of a "ul" HTML tag on secondary local tasks in the
+  Seven theme (markup change).
+- Fixed a bug which caused shortcut set titles to be double-escaped. The fix
+  replaces the "Edit shortcuts" menu item's title callback entry in hook_menu()
+  with a new function that does not escape HTML characters (data structure
+  change).
+- Modified the Update manager module to allow drupal.org to collect usage
+  statistics for individual modules and themes, rather than only for entire
+  projects.
+- Fixed a regression which caused a "call to undefined function
+  drupal_find_base_themes()" fatal error under rare circumstances.
+- Added "lang" attributes to language links, to better support screen readers.
+- Added proxy server support to drupal_http_request().
+- Updated various admin tables to use default "empty table" text UX pattern.
+
 Drupal 7.15, 2012-08-01
 -----------------------
 - Introduced a 'user_password_reset_timeout' variable to allow the 24-hour
@@ -950,7 +967,7 @@ Drupal 5.0, 2007-01-15
 - Removed the archive module.
 - Upgrade system:
     * Created space for update branches.
-- Forms API:
+- Form API:
     * Made it possible to programmatically submit forms.
     * Improved api for multistep forms.
 - Theme system:
