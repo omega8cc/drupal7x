@@ -237,6 +237,9 @@ function file_file_download($uri, $field_type = 'file') {
 function file_ajax_upload() {
   $form_parents = func_get_args();
   $form_build_id = (string) array_pop($form_parents);
+  if (preg_match("/x-progress-id/i", $form_build_id)) {
+    $form_build_id = (string) array_pop($form_parents);
+  }
 
   if (empty($_POST['form_build_id']) || $form_build_id != $_POST['form_build_id']) {
     // Invalid request.
