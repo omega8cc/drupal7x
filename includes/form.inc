@@ -728,7 +728,7 @@ function drupal_retrieve_form($form_id, &$form_state) {
   // the form builder callbacks can be loaded when the form is being rebuilt
   // from cache on a different path (such as 'system/ajax'). See
   // form_get_cache().
-  // $menu_get_item() is not available at installation time.
+  // $menu_get_item() is not available during installation.
   if (!isset($form_state['build_info']['files']['menu']) && !defined('MAINTENANCE_MODE')) {
     $item = menu_get_item();
     if (!empty($item['include_file'])) {
@@ -3663,6 +3663,35 @@ function form_pre_render_fieldset($element) {
 /**
  * Creates a group formatted as vertical tabs.
  *
+ * Note that autocomplete callbacks should include special handling as the
+ * user's input may contain forward slashes. If the user-submitted string has a
+ * '/' in the text that is sent in the autocomplete request, the menu system
+ * will split the text and pass it to the callback as multiple arguments.
+ *
+ * Suppose your autocomplete path in the menu system is 'mymodule_autocomplete.'
+ * In your form you have:
+ * @code
+ * '#autocomplete_path' => 'mymodule_autocomplete/' . $some_key . '/' . $some_id,
+ * @endcode
+ * The user types in "keywords" so the full path called is:
+ * 'mymodule_autocomplete/$some_key/$some_id/keywords'
+ *
+ * You should include code similar to the following to handle slashes in the
+ * input:
+ * @code
+ * function mymodule_autocomplete_callback($arg1, $arg2, $keywords) {
+ *   $args = func_get_args();
+ *   // We need to remove $arg1 and $arg2 from the beginning of the array so we
+ *   // are left with the keywords.
+ *   array_shift($args);
+ *   array_shift($args);
+ *   // We store the user's original input in $keywords, including any slashes.
+ *   $keywords = implode('/', $args);
+ *
+ *   // Your code here.
+ * }
+ * @endcode
+ *
  * @param $element
  *   An associative array containing the properties and children of the
  *   fieldset.
@@ -4381,7 +4410,7 @@ function batch_set($batch_definition) {
     }
 
     // Base and default properties for the batch set.
-    // Use get_t() to allow batches at install time.
+    // Use get_t() to allow batches during installation.
     $t = get_t();
     $init = array(
       'sandbox' => array(),
