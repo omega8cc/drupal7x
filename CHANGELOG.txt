@@ -1,5 +1,8 @@
 
-Drupal 7.17, xxxx-xx-xx (development version)
+Drupal 7.18, xxxx-xx-xx (development version)
+-----------------------
+
+Drupal 7.17, 2012-11-07
 -----------------------
 - Changed the default value of the '404_fast_html' variable to have a DOCTYPE
   declaration.
@@ -22,9 +25,9 @@ Drupal 7.17, xxxx-xx-xx (development version)
   database tables changing from VARCHAR to TEXT fields).
 - Added hook_taxonomy_term_view() and standardized the process for rendering
   taxonomy terms to invoke hook_entity_view() and otherwise make it consistent
-  with other entities (API change).
+  with other entities (API change: http://drupal.org/node/1808870).
 - Added hook_entity_view_mode_alter() to allow modules to change entity view
-  modes on display.
+  modes on display (API addition: http://drupal.org/node/1833086).
 - Fixed a bug which made database queries running a "LIKE" query on blob fields
   fail on PostgreSQL databases. This caused errors during the Drupal 6 to
   Drupal 7 upgrade.
@@ -47,7 +50,7 @@ Drupal 7.17, xxxx-xx-xx (development version)
   Seven theme (markup change).
 - Fixed bugs which caused taxonomy vocabulary and shortcut set titles to be
   double-escaped. The fix replaces the taxonomy vocabulary overview page and
-  "Edit shortcuts" menu items' title callbacks entries in hook_menu() with new
+  "Edit shortcuts" menu items' title callback entries in hook_menu() with new
   functions that do not escape HTML characters (data structure change).
 - Modified the Update manager module to allow drupal.org to collect usage
   statistics for individual modules and themes, rather than only for entire
