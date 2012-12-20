@@ -1,4 +1,26 @@
 
+Drupal 7.19, xxxx-xx-xx (development version)
+-----------------------
+- Added an assertThemeOutput() method to Simpletest to allow tests to check
+  that themed output matches an expected HTML string (API addition).
+- Added a link to "Install another module" after a module has been successfully
+  downloaded via the Update Manager (UI change).
+- Added an optional "exclusive" flag to installation profile .info files which
+  allows Drupal distributions to force a profile to be selected during
+  installation (API addition).
+- Fixed a bug which caused the database API to not properly close database
+  connections.
+- Added link to the URL for running cron from outside the site to the Cron
+  settings page (UI change).
+- Fixed a bug which prevented image styles from being reverted on PHP 5.4.
+- Made the default .htaccess rules protocol sensitive to improve security for
+  sites which use HTTPS and redirect between "www" and non-"www" versions of
+  the page.
+
+Drupal 7.18, 2012-12-19
+-----------------------
+- Fixed security issues (multiple vulnerabilities). See SA-CORE-2012-004.
+
 Drupal 7.17, 2012-11-07
 -----------------------
 - Changed the default value of the '404_fast_html' variable to have a DOCTYPE
