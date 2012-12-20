@@ -716,7 +716,6 @@ function drupal_settings_initialize() {
   if (isset($base_url)) {
     // Parse fixed base URL from settings.php.
     $parts = parse_url($base_url);
-    $http_protocol = $parts['scheme'];
     if (!isset($parts['path'])) {
       $parts['path'] = '';
     }
@@ -1200,10 +1199,11 @@ function _drupal_set_preferred_header_name($name = NULL) {
  * Headers are set in drupal_add_http_header(). Default headers are not set
  * if they have been replaced or unset using drupal_add_http_header().
  *
- * @param $default_headers
- *   An array of headers as name/value pairs.
- * @param $single
- *   If TRUE and headers have already be sent, send only the specified header.
+ * @param array $default_headers
+ *   (optional) An array of headers as name/value pairs.
+ * @param bool $only_default
+ *   (optional) If TRUE and headers have already been sent, send only the
+ *   specified headers.
  */
 function drupal_send_headers($default_headers = array(), $only_default = FALSE) {
   $headers_sent = &drupal_static(__FUNCTION__, FALSE);
