@@ -1201,6 +1201,10 @@ function hook_menu_get_item_alter(&$router_item, $path, $original_map) {
  *     same weight are ordered alphabetically.
  *   - "menu_name": Optional. Set this to a custom menu if you don't want your
  *     item to be placed in Navigation.
+ *   - "expanded": Optional. If set to TRUE, and if a menu link is provided for
+ *     this menu item (as a result of other properties), then the menu link is
+ *     always expanded, equivalent to its 'always expanded' checkbox being set
+ *     in the UI.
  *   - "context": (optional) Defines the context a tab may appear in. By
  *     default, all tabs are only displayed as local tasks when being rendered
  *     in a page context. All tabs that should be accessible as contextual links
@@ -1412,7 +1416,7 @@ function hook_menu_link_delete($link) {
  * - #link: An associative array containing:
  *   - title: The localized title of the link.
  *   - href: The system path to link to.
- *   - localized_options: An array of options to pass to url().
+ *   - localized_options: An array of options to pass to l().
  * - #active: Whether the link should be marked as 'active'.
  *
  * @param $data
@@ -1929,8 +1933,9 @@ function hook_image_toolkits() {
  *     The drupal_mail() id of the message. Look at module source code or
  *     drupal_mail() for possible id values.
  *  - 'to':
- *     The address or addresses the message will be sent to. The
- *     formatting of this string must comply with RFC 2822.
+ *     The address or addresses the message will be sent to. The formatting of
+ *     this string will be validated with the
+ *     @link http://php.net/manual/filter.filters.validate.php PHP e-mail validation filter. @endlink
  *  - 'from':
  *     The address the message will be marked as being from, which is
  *     either a custom address or the site-wide default email address.
@@ -2478,8 +2483,9 @@ function hook_watchdog(array $log_entry) {
  *   An array to be filled in. Elements in this array include:
  *   - id: An ID to identify the mail sent. Look at module source code
  *     or drupal_mail() for possible id values.
- *   - to: The address or addresses the message will be sent to. The
- *     formatting of this string must comply with RFC 2822.
+ *   - to: The address or addresses the message will be sent to. The formatting
+ *     of this string will be validated with the
+ *     @link http://php.net/manual/filter.filters.validate.php PHP e-mail validation filter. @endlink
  *   - subject: Subject of the e-mail to be sent. This must not contain any
  *     newline characters, or the mail may not be sent properly. drupal_mail()
  *     sets this to an empty string when the hook is invoked.
@@ -3242,8 +3248,7 @@ function hook_query_TAG_alter(QueryAlterableInterface $query) {
  * a hook_update_N() is added to the module, this function needs to be updated
  * to reflect the current version of the database schema.
  *
- * See the Schema API documentation at
- * @link http://drupal.org/node/146843 http://drupal.org/node/146843 @endlink
+ * See the @link http://drupal.org/node/146843 Schema API documentation @endlink
  * for details on hook_schema and how database tables are defined.
  *
  * Note that since this function is called from a full bootstrap, all functions
@@ -3627,6 +3632,9 @@ function hook_registry_files_alter(&$files, $modules) {
  * inspect later. It is important to remove any temporary variables using
  * variable_del() before your last task has completed and control is handed
  * back to the installer.
+ * 
+ * @param array $install_state
+ *   An array of information about the current installation state.
  *
  * @return
  *   A keyed array of tasks the profile will perform during the final stage of
@@ -3685,7 +3693,7 @@ function hook_registry_files_alter(&$files, $modules) {
  * @see install_state_defaults()
  * @see batch_set()
  */
-function hook_install_tasks() {
+function hook_install_tasks(&$install_state) {
   // Here, we define a variable to allow tasks to indicate that a particular,
   // processor-intensive batch process needs to be triggered later on in the
   // installation.
