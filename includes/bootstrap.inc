@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.18');
+define('VERSION', '7.19');
 
 /**
  * Core API compatibility.
@@ -716,6 +716,7 @@ function drupal_settings_initialize() {
   if (isset($base_url)) {
     // Parse fixed base URL from settings.php.
     $parts = parse_url($base_url);
+    $http_protocol = $parts['scheme'];
     if (!isset($parts['path'])) {
       $parts['path'] = '';
     }
