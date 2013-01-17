@@ -1260,6 +1260,7 @@ function node_delete_multiple($nids) {
 
     // Clear the page and block and node_load_multiple caches.
     entity_get_controller('node')->resetCache();
+    cache_clear_all(NULL, 'cache_page');
   }
 }
 
