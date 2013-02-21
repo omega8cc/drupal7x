@@ -2789,7 +2789,7 @@ function drupal_set_time_limit($time_limit) {
  *   The name of the item for which the path is requested.
  *
  * @return
- *   The path to the requested item.
+ *   The path to the requested item or an empty string if the item is not found.
  */
 function drupal_get_path($type, $name) {
   return dirname(drupal_get_filename($type, $name));
@@ -5734,7 +5734,7 @@ function drupal_pre_render_link($element) {
  * @code
  * $node->content['links'] = array(
  *   '#theme' => 'links__node',
- *   '#pre_render' = array('drupal_pre_render_links'),
+ *   '#pre_render' => array('drupal_pre_render_links'),
  *   'comment' => array(
  *     '#theme' => 'links__node__comment',
  *     '#links' => array(
