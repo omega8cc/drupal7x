@@ -3062,7 +3062,6 @@ function form_process_radios($element) {
  */
 function theme_checkbox($variables) {
   $element = $variables['element'];
-  $t = get_t();
   $element['#attributes']['type'] = 'checkbox';
   element_set_attributes($element, array('id', 'name', '#return_value' => 'value'));
 
@@ -4014,8 +4013,6 @@ function theme_file($variables) {
  */
 function theme_form_element($variables) {
   $element = &$variables['element'];
-  // This is also used in the installer, pre-database setup.
-  $t = get_t();
 
   // This function is invoked as theme wrapper, but the rendered form element
   // may not necessarily have been processed by form_builder().
