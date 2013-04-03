@@ -282,7 +282,7 @@ function drupal_get_rdf_namespaces() {
 /**
  * Adds output to the HEAD tag of the HTML page.
  *
- * This function can be called as long the headers aren't sent. Pass no
+ * This function can be called as long as the headers aren't sent. Pass no
  * arguments (or NULL for both) to retrieve the currently stored elements.
  *
  * @param $data
@@ -786,6 +786,13 @@ function drupal_access_denied() {
  *   - data: A string containing the response body that was received.
  */
 function drupal_http_request($url, array $options = array()) {
+  // Allow an alternate HTTP client library to replace Drupal's default
+  // implementation.
+  $override_function = variable_get('drupal_http_request_function', FALSE);
+  if (!empty($override_function) && function_exists($override_function)) {
+    return $override_function($url, $options);
+  }
+
   $result = new stdClass();
 
   // Parse the URL and make sure we can handle the schema.
@@ -3879,7 +3886,16 @@ function drupal_html_id($id) {
       // requested id. $_POST['ajax_html_ids'] contains the ids as they were
       // returned by this function, potentially with the appended counter, so
       // we parse that to reconstruct the $seen_ids array.
-      foreach ($_POST['ajax_html_ids'] as $seen_id) {
+      if (is_array($_POST['ajax_html_ids'])) {
+        $ajax_html_ids = $_POST['ajax_html_ids'];
+      }
+      else {
+        // jquery.form.js may send the server a comma-separated string instead
+        // of an array (see http://drupal.org/node/1575060), so we need to
+        // convert it to an array in that case.
+        $ajax_html_ids = explode(',', $_POST['ajax_html_ids']);
+      }
+      foreach ($ajax_html_ids as $seen_id) {
         // We rely on '--' being used solely for separating a base id from the
         // counter, which this function ensures when returning an id.
         $parts = explode('--', $seen_id, 2);

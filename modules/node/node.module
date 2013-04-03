@@ -141,6 +141,7 @@ function node_theme() {
     ),
     'node_admin_overview' => array(
       'variables' => array('name' => NULL, 'type' => NULL),
+      'file' => 'content_types.inc',
     ),
     'node_recent_block' => array(
       'variables' => array('nodes' => NULL),
@@ -2600,7 +2601,6 @@ function node_feed($nids = FALSE, $channel = array()) {
 
   $item_length = variable_get('feed_item_length', 'fulltext');
   $namespaces = array('xmlns:dc' => 'http://purl.org/dc/elements/1.1/');
-  $teaser = ($item_length == 'teaser');
 
   // Load all nodes to be rendered.
   $nodes = node_load_multiple($nids);

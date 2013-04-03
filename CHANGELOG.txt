@@ -1,6 +1,30 @@
 
 Drupal 7.22, xxxx-xx-xx (development version)
 -----------------------
+- Allowed the drupal_http_request() function to be overridden so that
+  additional HTTP request capabilities can be added by contributed modules.
+- Changed the Simpletest module to allow PSR-0 test classes to be used in
+  Drupal 7.
+- Removed an unnecessary "Content-Disposition" header from private file
+  downloads; it prevented many private files from being viewed inline in a web
+  browser.
+- Changed various field API functions to allow them to optionally act on a
+  single field within an entity (API addition: http://drupal.org/node/1825844).
+- Fixed a bug which prevented Drupal's file transfer functionality from working
+  on some PHP 5.4 systems.
+- Fixed incorrect log message when theme() is called for a theme hook that does
+  not exist (minor string change).
+- Fixed Drupal's token-replacement system to allow spaces in the token value.
+- Changed the default behavior after a user creates a node they do not have
+  access to view. The user will now be redirected to the front page rather than
+  an access denied page.
+- Fixed a bug which prevented empty HTTP headers (such as "0") from being set.
+  (Minor behavior change: Callers of drupal_add_http_header() must now set
+  FALSE explicitly to prevent a header from being sent at all; this was already
+  indicated in the function's documentation.)
+- Fixed OpenID errors when more than one module implements hook_openid(). The
+  behavior is now changed so that if more than one module tries to set the same
+  parameter, the last module's change takes effect.
 - Fixed a serious documentation bug: The $name variable in the
   taxonomy-term.tpl.php theme template was incorrectly documented as being
   sanitized when in fact it is not.
@@ -32,12 +56,15 @@ Drupal 7.22, xxxx-xx-xx (development version)
   installation (API addition).
 - Fixed a bug which caused the database API to not properly close database
   connections.
-- Added link to the URL for running cron from outside the site to the Cron
+- Added a link to the URL for running cron from outside the site to the Cron
   settings page (UI change).
 - Fixed a bug which prevented image styles from being reverted on PHP 5.4.
 - Made the default .htaccess rules protocol sensitive to improve security for
   sites which use HTTPS and redirect between "www" and non-"www" versions of
   the page.
+- Numerous small bug fixes.
+- Numerous API documentation improvements.
+- Additional automated test coverage.
 
 Drupal 7.21, 2013-03-06
 -----------------------
