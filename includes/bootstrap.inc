@@ -1037,7 +1037,10 @@ function drupal_page_get_cache($check_only = FALSE) {
   }
 
   if (drupal_page_is_cacheable()) {
-    $cache = cache_get($base_root . request_uri(), 'cache_page');
+    $cid = $base_root . request_uri();
+    // Allow modules to alter the cid.
+    drupal_alter('page_cache_cid', $cid);
+    $cache = cache_get($cid, 'cache_page');
     if ($cache !== FALSE) {
       $cache_hit = TRUE;
     }

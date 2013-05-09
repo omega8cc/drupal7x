@@ -5322,17 +5322,27 @@ function drupal_page_set_cache() {
   global $base_root;
 
   if (drupal_page_is_cacheable()) {
+    $body = ob_get_clean();
     $cache = (object) array(
       'cid' => $base_root . request_uri(),
       'data' => array(
         'path' => $_GET['q'],
-        'body' => ob_get_clean(),
+        'body' => $body,
         'title' => drupal_get_title(),
         'headers' => array(),
       ),
       'expire' => CACHE_TEMPORARY,
       'created' => REQUEST_TIME,
     );
+
+    // Allow modules to alter the cache object.
+    drupal_alter('page_cache_object', $cache);
+    // If caching got disabled - fill the output buffer again and return.
+    if (!$cache) {
+      ob_start();
+      echo $body;
+      return FALSE;
+    }
 
     // Restore preferred header names based on the lower-case names returned
     // by drupal_get_http_header().
