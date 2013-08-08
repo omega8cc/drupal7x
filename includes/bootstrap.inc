@@ -819,7 +819,7 @@ function drupal_settings_initialize() {
 function drupal_get_filename($type, $name, $filename = NULL) {
   // The location of files will not change during the request, so do not use
   // drupal_static().
-  static $files = array(), $dirs = array();
+  static $files = array(), $dirs = array(), $bad = array();
 
   // Profiles are a special case: they have a fixed location and naming.
   if ($type == 'profile') {
@@ -870,7 +870,15 @@ function drupal_get_filename($type, $name, $filename = NULL) {
         $extension = $type;
       }
 
-      if (!isset($dirs[$dir][$extension])) {
+      // See if we have a cached list of files missing from the file system.
+      if (empty($bad)) {
+        $cache = cache_get('drupal_get_filename:bad');
+        if (!empty($cache->data)) {
+          $bad = $cache->data;
+        }
+      }
+
+      if (!isset($dirs[$dir][$extension]) && !isset($bad[$type][$name])) {
         $dirs[$dir][$extension] = TRUE;
         if (!function_exists('drupal_system_listing')) {
           require_once DRUPAL_ROOT . '/includes/common.inc';
@@ -889,6 +897,12 @@ function drupal_get_filename($type, $name, $filename = NULL) {
 
   if (isset($files[$type][$name])) {
     return $files[$type][$name];
+  }
+  elseif (!isset($bad[$type][$name])) {
+    // Add the missing file to a temporary cache and throw a watchdog alert.
+    $bad[$type][$name] = TRUE;
+    cache_set('drupal_get_filename:bad', $bad, 'cache', CACHE_TEMPORARY);
+    watchdog('system', 'The following @type is missing from the file system: @name.', array('@type' => $type, '@name' => $name), WATCHDOG_ALERT);
   }
 }
 
