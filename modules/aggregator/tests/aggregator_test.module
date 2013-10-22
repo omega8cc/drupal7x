@@ -23,7 +23,7 @@ function aggregator_test_menu() {
  *   Set TRUE to send an etag.
  */
 function aggregator_test_feed($use_last_modified = FALSE, $use_etag = FALSE) {
-  $last_modified = strtotime('Sun, 19 Nov 1978 05:00:00 GMT');
+  $last_modified = strtotime('Tue, 24 Jan 1984 08:00:00 GMT');
   $etag = drupal_hash_base64($last_modified);
 
   $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) : FALSE;
@@ -44,7 +44,7 @@ function aggregator_test_feed($use_last_modified = FALSE, $use_etag = FALSE) {
   }
 
   // The following headers force validation of cache:
-  drupal_add_http_header('Expires', 'Sun, 19 Nov 1978 05:00:00 GMT');
+  drupal_add_http_header('Expires', 'Tue, 24 Jan 1984 08:00:00 GMT');
   drupal_add_http_header('Cache-Control', 'must-revalidate');
   drupal_add_http_header('Content-Type', 'application/rss+xml; charset=utf-8');
 

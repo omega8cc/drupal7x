@@ -1315,7 +1315,7 @@ class NodeSaveTestCase extends DrupalWebTestCase {
       'uid' => $this->web_user->uid,
       'type' => 'article',
       'title' => $this->randomName(8),
-      'created' => 280299600, // Sun, 19 Nov 1978 05:00:00 GMT
+      'created' => 443779200, // Tue, 24 Jan 1984 08:00:00 GMT
       'changed' => 979534800, // Drupal 1.0 release.
     );
 
