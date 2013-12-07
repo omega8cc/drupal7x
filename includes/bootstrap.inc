@@ -898,7 +898,7 @@ function drupal_get_filename($type, $name, $filename = NULL) {
   if (isset($files[$type][$name])) {
     return $files[$type][$name];
   }
-  elseif (!isset($bad[$type][$name])) {
+  elseif (!defined('DRUSH_BASE_PATH') && !isset($bad[$type][$name])) {
     // Add the missing file to a temporary cache and throw a watchdog alert.
     $bad[$type][$name] = TRUE;
     cache_set('drupal_get_filename:bad', $bad, 'cache', CACHE_TEMPORARY);
