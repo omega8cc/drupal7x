@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.24');
+define('VERSION', '7.25');
 
 /**
  * Core API compatibility.
@@ -683,7 +683,8 @@ function drupal_environment_initialize() {
   ini_set('session.use_only_cookies', '1');
   ini_set('session.use_trans_sid', '0');
   // Don't send HTTP headers using PHP's session handler.
-  ini_set('session.cache_limiter', 'none');
+  // An empty string is used here to disable the cache limiter.
+  ini_set('session.cache_limiter', '');
   // Use httponly session cookies.
   ini_set('session.cookie_httponly', '1');
 
@@ -1292,7 +1293,7 @@ function drupal_page_header() {
  */
 function drupal_serve_page_from_cache(stdClass $cache) {
   // Negotiate whether to use compression.
-  $page_compression = variable_get('page_compression', TRUE) && extension_loaded('zlib');
+  $page_compression = !empty($cache->data['page_compressed']);
   $return_compressed = $page_compression && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE;
 
   // Get headers set in hook_boot(). Keys are lower-case.
@@ -2163,7 +2164,7 @@ function drupal_array_merge_deep_array($arrays) {
  * @return Object - the user object.
  */
 function drupal_anonymous_user() {
-  $user = new stdClass();
+  $user = variable_get('drupal_anonymous_user_object', new stdClass);
   $user->uid = 0;
   $user->hostname = ip_address();
   $user->roles = array();

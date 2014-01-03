@@ -930,7 +930,7 @@ function drupal_http_request($url, array $options = array()) {
 
   // If the server URL has a user then attempt to use basic authentication.
   if (isset($uri['user'])) {
-    $options['headers']['Authorization'] = 'Basic ' . base64_encode($uri['user'] . (isset($uri['pass']) ? ':' . $uri['pass'] : ''));
+    $options['headers']['Authorization'] = 'Basic ' . base64_encode($uri['user'] . (isset($uri['pass']) ? ':' . $uri['pass'] : ':'));
   }
 
   // If the database prefix is being used by SimpleTest to run the tests in a copied
@@ -3674,17 +3674,23 @@ function drupal_load_stylesheet($file, $optimize = NULL, $reset_basepath = TRUE)
   if ($basepath && !file_uri_scheme($file)) {
     $file = $basepath . '/' . $file;
   }
+  // Store the parent base path to restore it later.
+  $parent_base_path = $basepath;
+  // Set the current base path to process possible child imports.
   $basepath = dirname($file);
 
   // Load the CSS stylesheet. We suppress errors because themes may specify
   // stylesheets in their .info file that don't exist in the theme's path,
   // but are merely there to disable certain module CSS files.
+  $content = '';
   if ($contents = @file_get_contents($file)) {
     // Return the processed stylesheet.
-    return drupal_load_stylesheet_content($contents, $_optimize);
+    $content = drupal_load_stylesheet_content($contents, $_optimize);
   }
 
-  return '';
+  // Restore the parent base path as the file and its childen are processed.
+  $basepath = $parent_base_path;
+  return $content;
 }
 
 /**
@@ -3701,7 +3707,7 @@ function drupal_load_stylesheet($file, $optimize = NULL, $reset_basepath = TRUE)
  */
 function drupal_load_stylesheet_content($contents, $optimize = FALSE) {
   // Remove multiple charset declarations for standards compliance (and fixing Safari problems).
-  $contents = preg_replace('/^@charset\s+[\'"](\S*)\b[\'"];/i', '', $contents);
+  $contents = preg_replace('/^@charset\s+[\'"](\S*?)\b[\'"];/i', '', $contents);
 
   if ($optimize) {
     // Perform some safe CSS optimizations.
@@ -3834,7 +3840,14 @@ function drupal_clean_css_identifier($identifier, $filter = array(' ' => '-', '_
  *   The cleaned class name.
  */
 function drupal_html_class($class) {
-  return drupal_clean_css_identifier(drupal_strtolower($class));
+  // The output of this function will never change, so this uses a normal
+  // static instead of drupal_static().
+  static $classes = array();
+
+  if (!isset($classes[$class])) {
+    $classes[$class] = drupal_clean_css_identifier(drupal_strtolower($class));
+  }
+  return $classes[$class];
 }
 
 /**
@@ -4098,7 +4111,7 @@ function drupal_region_class($region) {
  *       else being the same, JavaScript added by a call to drupal_add_js() that
  *       happened later in the page request gets added to the page after one for
  *       which drupal_add_js() happened earlier in the page request.
- *   - defer: If set to TRUE, the defer attribute is set on the &lt;script&gt;
+ *   - defer: If set to TRUE, the defer attribute is set on the <script>
  *     tag. Defaults to FALSE.
  *   - cache: If set to FALSE, the JavaScript file is loaded anew on every page
  *     call; in other words, it is not cached. Used only when 'type' references
@@ -5315,6 +5328,10 @@ function drupal_page_set_cache() {
   global $base_root;
 
   if (drupal_page_is_cacheable()) {
+
+    // Check whether the current page might be compressed.
+    $page_compressed = variable_get('page_compression', TRUE) && extension_loaded('zlib');
+
     $body = ob_get_clean();
     $cache = (object) array(
       'cid' => $base_root . request_uri(),
@@ -5323,6 +5340,9 @@ function drupal_page_set_cache() {
         'body' => $body,
         'title' => drupal_get_title(),
         'headers' => array(),
+        // We need to store whether page was compressed or not,
+        // because by the time it is read, the configuration might change.
+        'page_compressed' => $page_compressed,
       ),
       'expire' => CACHE_TEMPORARY,
       'created' => REQUEST_TIME,
@@ -5349,7 +5369,7 @@ function drupal_page_set_cache() {
     }
 
     if ($cache->data['body']) {
-      if (variable_get('page_compression', TRUE) && extension_loaded('zlib')) {
+      if ($page_compressed) {
         $cache->data['body'] = gzencode($cache->data['body'], 9, FORCE_GZIP);
       }
       cache_set($cache->cid, $cache->data, 'cache_page', $cache->expire);
@@ -5424,6 +5444,10 @@ function drupal_cron_run() {
   }
 
   foreach ($queues as $queue_name => $info) {
+    if (!empty($info['skip on cron'])) {
+      // Do not run if queue wants to skip.
+      continue;
+    }
     $function = $info['worker callback'];
     $end = time() + (isset($info['time']) ? $info['time'] : 15);
     $queue = DrupalQueue::get($queue_name);
