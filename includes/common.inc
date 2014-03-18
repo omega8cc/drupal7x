@@ -5578,7 +5578,7 @@ function drupal_system_listing($mask, $directory, $key = 'name', $min_depth = 1)
   // For SimpleTest to be able to test modules packaged together with a
   // distribution we need to include the profile of the parent site (in which
   // test runs are triggered).
-  if (drupal_valid_test_ua()) {
+  if (drupal_test_running()) {
     $testing_profile = variable_get('simpletest_parent_profile', FALSE);
     if ($testing_profile && $testing_profile != $profile) {
       $profiles[] = $testing_profile;
