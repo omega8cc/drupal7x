@@ -5485,6 +5485,37 @@ function drupal_cron_cleanup() {
 }
 
 /**
+ * Recursive function to find listing paths for profiles and their parents.
+ *
+ * @param string $profile
+ *   The name of the profile to search.
+ * @param string $directory
+ *   The subdirectory name in which the files are found. For example,
+ *   'modules' will search in sub-directories of the top-level /modules
+ *   directory, sub-directories of /sites/all/modules/, etc.
+ * @param array $searchdir
+ *   The searchdir already found and to which to add before returning.
+ *
+ * @return array
+ *   An array of paths that should be searched. Starting with param $searchdir and any
+ *   items added from the profile and parents.
+ */
+function drupal_system_listing_profile($profile, $directory, $searchdir = array()) {
+  $info  = drupal_parse_info_file("profiles/$profile/$profile.info");
+  if(isset($info['base'])) {
+    $bases = is_array($info['base']) ? $info['base'] : array($info['base']);
+    foreach($info['base'] as $base) {
+      $searchdir = drupal_system_listing_profile($base, $directory, $searchdir);
+    }
+  }
+  if (file_exists("profiles/$profile/$directory")) {
+    $searchdir[] = "profiles/$profile/$directory";
+  }
+
+  return $searchdir;
+}
+
+/**
  * Returns information about system object files (modules, themes, etc.).
  *
  * This function is used to find all or some system object files (module files,
@@ -5557,9 +5588,7 @@ function drupal_system_listing($mask, $directory, $key = 'name', $min_depth = 1)
   // profile always has precedence.
   $profiles[] = $profile;
   foreach ($profiles as $profile) {
-    if (file_exists("profiles/$profile/$directory")) {
-      $searchdir[] = "profiles/$profile/$directory";
-    }
+    $searchdir = drupal_system_listing_profile($profile, $directory, $searchdir);
   }
 
   // Always search sites/all/* as well as the global directories.
