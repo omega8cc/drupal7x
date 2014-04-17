@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.28-dev');
+define('VERSION', '7.27');
 
 /**
  * Core API compatibility.
@@ -820,7 +820,7 @@ function drupal_settings_initialize() {
 function drupal_get_filename($type, $name, $filename = NULL) {
   // The location of files will not change during the request, so do not use
   // drupal_static().
-  static $files = array(), $dirs = array();
+  static $files = array(), $dirs = array(), $bad = array();
 
   // Profiles are a special case: they have a fixed location and naming.
   if ($type == 'profile') {
@@ -871,7 +871,15 @@ function drupal_get_filename($type, $name, $filename = NULL) {
         $extension = $type;
       }
 
-      if (!isset($dirs[$dir][$extension])) {
+      // See if we have a cached list of files missing from the file system.
+      if (empty($bad)) {
+        $cache = cache_get('drupal_get_filename:bad');
+        if (!empty($cache->data)) {
+          $bad = $cache->data;
+        }
+      }
+
+      if (!isset($dirs[$dir][$extension]) && !isset($bad[$type][$name])) {
         $dirs[$dir][$extension] = TRUE;
         if (!function_exists('drupal_system_listing')) {
           require_once DRUPAL_ROOT . '/includes/common.inc';
@@ -890,6 +898,12 @@ function drupal_get_filename($type, $name, $filename = NULL) {
 
   if (isset($files[$type][$name])) {
     return $files[$type][$name];
+  }
+  elseif (!defined('DRUSH_BASE_PATH') && !isset($bad[$type][$name])) {
+    // Add the missing file to a temporary cache and throw a watchdog alert.
+    $bad[$type][$name] = TRUE;
+    cache_set('drupal_get_filename:bad', $bad, 'cache', CACHE_TEMPORARY);
+    watchdog('system', 'The following @type is missing from the file system: @name.', array('@type' => $type, '@name' => $name), WATCHDOG_ALERT);
   }
 }
 
@@ -1258,7 +1272,7 @@ function drupal_page_header() {
   $headers_sent = TRUE;
 
   $default_headers = array(
-    'Expires' => 'Sun, 19 Nov 1978 05:00:00 GMT',
+    'Expires' => 'Tue, 24 Jan 1984 08:00:00 GMT',
     'Last-Modified' => gmdate(DATE_RFC1123, REQUEST_TIME),
     'Cache-Control' => 'no-cache, must-revalidate, post-check=0, pre-check=0',
     'ETag' => '"' . REQUEST_TIME . '"',
@@ -1335,7 +1349,7 @@ function drupal_serve_page_from_cache(stdClass $cache) {
   // by sending an Expires date in the past. HTTP/1.1 clients ignores the
   // Expires header if a Cache-Control: max-age= directive is specified (see RFC
   // 2616, section 14.9.3).
-  $default_headers['Expires'] = 'Sun, 19 Nov 1978 05:00:00 GMT';
+  $default_headers['Expires'] = 'Tue, 24 Jan 1984 08:00:00 GMT';
 
   drupal_send_headers($default_headers);
 
@@ -2502,6 +2516,23 @@ function _drupal_bootstrap_page_header() {
  */
 function drupal_get_bootstrap_phase() {
   return drupal_bootstrap();
+}
+
+/**
+ * Returns whether a simpletest is running or peparing to run.
+ *
+ * @param $set
+ *   Set whether a test is running.
+ *
+ * @return
+ *   TRUE if test is running, false otherwise.
+ */
+function drupal_test_running($set = NULL) {
+  static $test_running = NULL;
+  if (isset($set)) {
+    $test_running = $set;
+  }
+  return isset($test_running) ? $test_running : (bool)drupal_valid_test_ua();
 }
 
 /**
