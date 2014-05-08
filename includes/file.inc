@@ -641,7 +641,11 @@ function file_save(stdClass $file) {
     module_invoke_all('entity_update', $file, 'file');
   }
 
+  // Clear internal properties.
   unset($file->original);
+  // Clear the static loading cache.
+  entity_get_controller('file')->resetCache(array($file->fid));
+
   return $file;
 }
 
@@ -1313,6 +1317,7 @@ function file_delete(stdClass $file, $force = FALSE) {
   if (file_unmanaged_delete($file->uri)) {
     db_delete('file_managed')->condition('fid', $file->fid)->execute();
     db_delete('file_usage')->condition('fid', $file->fid)->execute();
+    entity_get_controller('file')->resetCache();
     return TRUE;
   }
   return FALSE;
