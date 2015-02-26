@@ -2812,7 +2812,12 @@ function drupal_map_assoc($array, $function = NULL) {
  */
 function drupal_set_time_limit($time_limit) {
   if (function_exists('set_time_limit')) {
-    @set_time_limit($time_limit);
+    $current_limit = intval(ini_get('max_execution_time'));
+    // Do not set time limit if it is currently unlimited (0) or greater than
+    // the new time limit.
+    if ($current_limit > 0 && $current_limit < $time_limit) {
+      @set_time_limit($time_limit);
+    }
   }
 }
 
