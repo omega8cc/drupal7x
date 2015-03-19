@@ -4620,8 +4620,8 @@ function drupal_aggregate_js(&$js_groups) {
  *
  * Libraries, JavaScript, CSS and other types of custom structures are attached
  * to elements using the #attached property. The #attached property is an
- * associative array, where the keys are the the attachment types and the values
- * are the attached data. For example:
+ * associative array, where the keys are the attachment types and the values are
+ * the attached data. For example:
  * @code
  * $build['#attached'] = array(
  *   'js' => array(drupal_get_path('module', 'taxonomy') . '/taxonomy.js'),
