@@ -494,20 +494,6 @@ function forum_comment_publish($comment) {
 }
 
 /**
- * Implements hook_comment_update().
- *
- * The Comment module doesn't call hook_comment_unpublish() when saving
- * individual comments, so we need to check for those here.
- */
-function forum_comment_update($comment) {
-  // comment_save() calls hook_comment_publish() for all published comments,
-  // so we need to handle all other values here.
-  if (!$comment->status) {
-    _forum_update_forum_index($comment->nid);
-  }
-}
-
-/**
  * Implements hook_comment_unpublish().
  */
 function forum_comment_unpublish($comment) {

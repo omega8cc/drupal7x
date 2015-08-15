@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * A dummy module for testing comment related hooks.
+ *
+ * This is a dummy module that implements comment related hooks to test API
+ * interaction with the Comment module.
+ */
+
+/**
+ * Implements hook_comment_publish().
+ */
+function comment_test_comment_publish($comment) {
+  // Display a message on publish.
+  drupal_set_message(t('Comment @subject has been published', array('@subject' => $comment->subject)));
+}
+
+/**
+ * Implements hook_comment_unpublish().
+ */
+function comment_test_comment_unpublish($comment) {
+  // Display a message on unpublish.
+  drupal_set_message(t('Comment @subject has been unpublished', array('@subject' => $comment->subject)));
+}

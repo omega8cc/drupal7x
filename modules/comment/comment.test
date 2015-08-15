@@ -11,7 +11,13 @@ class CommentHelperCase extends DrupalWebTestCase {
   protected $node;
 
   function setUp() {
-    parent::setUp('comment', 'search');
+    $modules = func_get_args();
+    if (isset($modules[0]) && is_array($modules[0])) {
+      $modules = $modules[0];
+    }
+    $modules[] = 'comment';
+    parent::setUp($modules);
+
     // Create users and test node.
     $this->admin_user = $this->drupalCreateUser(array('administer content types', 'administer comments', 'administer blocks', 'administer actions'));
     $this->web_user = $this->drupalCreateUser(array('access comments', 'post comments', 'create article content', 'edit own comments'));
@@ -112,6 +118,32 @@ class CommentHelperCase extends DrupalWebTestCase {
     else {
       return FALSE;
     }
+  }
+
+  /**
+   * Publish comment.
+   *
+   * @param object $comment
+   *   Comment to publish.
+   */
+  function publishComment($comment) {
+    $edit = array();
+    $edit['status'] = COMMENT_PUBLISHED;
+
+    $this->drupalPost('comment/' . $comment->id . '/edit', $edit, t('Save'));
+  }
+
+  /**
+   * Unpublish comment.
+   *
+   * @param object $comment
+   *   Comment to unpublish.
+   */
+  function unpublishComment($comment) {
+    $edit = array();
+    $edit['status'] = COMMENT_NOT_PUBLISHED;
+
+    $this->drupalPost('comment/' . $comment->id . '/edit', $edit, t('Save'));
   }
 
   /**
@@ -1660,6 +1692,43 @@ class CommentApprovalTest extends CommentHelperCase {
 
     $this->drupalGet('node/' . $this->node->nid);
     $this->assertTrue($this->commentExists($anonymous_comment4), 'Anonymous comment visible.');
+  }
+}
+
+/**
+ * Tests comment publishing and unpublishing.
+ */
+class CommentPublishTest extends CommentHelperCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'hook_comment_publish() and hook_comment_unpublish()',
+      'description' => 'Tests comment publishing and unpublishing.',
+      'group' => 'Comment',
+    );
+  }
+
+  function setUp() {
+    parent::setUp('comment_test');
+  }
+
+  /**
+   * Test that publish and unpublish hooks are invoked correctly.
+   */
+  function testCommentPublishHooks() {
+    $this->drupalLogin($this->admin_user);
+
+    // Post comment.
+    $subject = $this->randomName();
+    $body = $this->randomName();
+    $comment = $this->postComment($this->node, $body, $subject);
+
+    // Publish comment.
+    $this->publishComment($comment);
+    $this->assertRaw(t('Comment @subject has been published', array('@subject' => $subject)), 'hook_comment_publish() fired correctly.');
+
+    // Unpublish comment.
+    $this->unpublishComment($comment);
+    $this->assertRaw(t('Comment @subject has been unpublished', array('@subject' => $subject)), 'hook_comment_unpublish() fired correctly.');
   }
 }
 
