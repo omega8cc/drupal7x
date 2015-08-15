@@ -1518,7 +1518,11 @@ function _menu_tree_check_access(&$tree) {
     if (!empty($item['hidden']) && empty($item['in_active_trail']) && !user_access('administer menu')) {
       continue;
     }
-    _menu_link_translate($item);
+    // Prevent translating menu links twice.
+    if (!isset($item['menu_link_translated'])) {
+      _menu_link_translate($item);
+      $item['menu_link_translated'] = TRUE;
+    }
     if ($item['access'] || ($item['in_active_trail'] && strpos($item['href'], '%') !== FALSE)) {
       if ($tree[$key]['below']) {
         _menu_tree_check_access($tree[$key]['below']);
