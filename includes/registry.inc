@@ -20,18 +20,26 @@
  */
 function _registry_update() {
 
-  // The registry serves as a central autoloader for all classes, including
-  // the database query builders. However, the registry rebuild process
-  // requires write ability to the database, which means having access to the
-  // query builders that require the registry in order to be loaded. That
-  // causes a fatal race condition. Therefore we manually include the
-  // appropriate query builders for the currently active database before the
-  // registry rebuild process runs.
-  $connection_info = Database::getConnectionInfo();
-  $driver = $connection_info['default']['driver'];
-  require_once DRUPAL_ROOT . '/includes/database/query.inc';
-  require_once DRUPAL_ROOT . '/includes/database/select.inc';
-  require_once DRUPAL_ROOT . '/includes/database/' . $driver . '/query.inc';
+  // During the first registry rebuild in a request, we check all the files.
+  // During subsequent rebuilds, we only add new files. It makes the rebuilding
+  // process faster during installation of modules.
+  static $first_run = TRUE;
+
+  if ($first_run) {
+    // The registry serves as a central autoloader for all classes, including
+    // the database query builders. However, the registry rebuild process
+    // requires write ability to the database, which means having access to the
+    // query builders that require the registry in order to be loaded. That
+    // causes a fatal race condition. Therefore we manually include the
+    // appropriate query builders for the currently active database before the
+    // registry rebuild process runs.
+    $connection_info = Database::getConnectionInfo();
+    $driver = $connection_info['default']['driver'];
+    require_once DRUPAL_ROOT . '/includes/database/query.inc';
+    require_once DRUPAL_ROOT . '/includes/database/select.inc';
+    require_once DRUPAL_ROOT . '/includes/database/' . $driver . '/query.inc';
+
+  }
 
   // Get current list of modules and their files.
   $modules = db_query("SELECT * FROM {system} WHERE type = 'module'")->fetchAll();
@@ -66,7 +74,14 @@ function _registry_update() {
     foreach (registry_get_parsed_files() as $filename => $file) {
       // Add the hash for those files we have already parsed.
       if (isset($files[$filename])) {
-        $files[$filename]['hash'] = $file['hash'];
+        if ($first_run) {
+          $files[$filename]['hash'] = $file['hash'];
+        }
+        else {
+          // Ignore that file for this request, it has been parsed previously
+          // and it is unlikely it has changed.
+          unset($files[$filename]);
+        }
       }
       else {
         // Flush the registry of resources in files that are no longer on disc
@@ -107,6 +122,9 @@ function _registry_update() {
   if (count($unchanged_resources) > 0) {
     cache_set('lookup_cache', $unchanged_resources, 'cache_bootstrap');
   }
+
+  // Don't bother double checking the same files
+  $first_run = FALSE;
 }
 
 /**
