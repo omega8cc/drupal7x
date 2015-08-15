@@ -1,6 +1,14 @@
 <?php
 
 /**
+ * Sorry to patch core; fixes known APC "cannot redeclare class" bug.
+ *
+ * @see https://drupal.org/node/838744
+ * @see http://goo.gl/JZi05
+ */
+if (!class_exists('insertquery_mysql')) {
+
+/**
  * @file
  * Core systems for the database layer.
  *
@@ -1906,6 +1914,7 @@ class DatabaseTransaction {
     // If we rolled back then the transaction would have already been popped.
     if (!$this->rolledBack) {
       $this->connection->popTransaction($this->name);
+      DrupalCache::commit($this->connection->transactionDepth());
     }
   }
 
@@ -1931,6 +1940,7 @@ class DatabaseTransaction {
   public function rollback() {
     $this->rolledBack = TRUE;
     $this->connection->rollback($this->name);
+    DrupalCache::rollback($this->connection->transactionDepth());
   }
 }
 
@@ -3039,4 +3049,9 @@ function db_ignore_slave() {
     // Set session variable with amount of time to delay before using slave.
     $_SESSION['ignore_slave_server'] = REQUEST_TIME + $duration;
   }
+}
+
+/**
+ * @see top of this file.
+ */
 }

@@ -417,6 +417,10 @@ function text_summary($text, $format = NULL, $size = NULL) {
   // If the first paragraph is too long, split at the end of a sentence.
   $break_points[] = array('. ' => 1, '! ' => 1, '? ' => 1, '。' => 0, '؟ ' => 1);
 
+  // If the first sentence is too long, split at the first word break
+  $word_breaks = array(' ' => 0, "\t" => 0);
+  $break_points[] = $word_breaks;
+
   // Iterate over the groups of break points until a break point is found.
   foreach ($break_points as $points) {
     // Look for each break point, starting at the end of the summary.
@@ -432,6 +436,11 @@ function text_summary($text, $format = NULL, $size = NULL) {
     if ($min_rpos !== $max_rpos) {
       // Don't slice with length 0. Length must be <0 to slice from RHS.
       $summary = ($min_rpos === 0) ? $summary : substr($summary, 0, 0 - $min_rpos);
+
+      // Append ellipsis if we broke a sentence
+      if (in_array($point, array_keys($word_breaks))) {
+        $summary .= '&hellip;';
+      }
       break;
     }
   }
