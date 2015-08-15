@@ -91,6 +91,27 @@
  * transaction related crashes with such configuration, set the 'transactions'
  * key to FALSE.
  *
+ * Drupal database layer is based on PDO, you can pass any arbitrary driver
+ * option that is supported by the database engine by passing them to the
+ * 'pdo' array. The keys of this array are driver names, values
+ * are the corresponding values. You can also set arbitrary PDO attributes
+ * that will be enforced when the connection to the database is established
+ * using the 'pdo attributes' array with the same format:
+ * @code
+ * 'pdo attributes' => array(
+ *   // Set the timeout to 1 second, instead of the default 30 seconds.
+ *   PDO::ATTR_TIMEOUT => 1,
+ * ),
+ * 'pdo' => array(
+ *   PDO::MYSQL_ATTR_SSL_KEY => '/path/to/key.pem',
+ *   PDO::MYSQL_ATTR_SSL_CERT => '/path/to/cert.pem',
+ *   // Optional
+ *   PDO::MYSQL_ATTR_COMPRESS => false,
+ *   PDO::MYSQL_ATTR_SSL_CAPATH => '/ca/path',
+ *   PDO::MYSQL_ATTR_SSL_CIPHER => 'ssl cipher',
+ * ),
+ * @endcode
+ *
  * For each database, you may optionally specify multiple "target" databases.
  * A target database allows Drupal to try to send certain queries to a
  * different database if it can but fall back to the default connection if not.
@@ -123,6 +144,15 @@
  *   'host' => 'localhost',
  *   'prefix' => 'main_',
  *   'collation' => 'utf8_general_ci',
+ *   'pdo attributes' => array(
+ *     // Set the timeout to 1 second, instead of the default 30 seconds.
+ *     PDO::ATTR_TIMEOUT => 1,
+ *   ),
+ *   // For SSL Connection
+ *   'pdo' => array(
+ *     PDO::MYSQL_ATTR_SSL_KEY => '/path/to/key.pem',
+ *     PDO::MYSQL_ATTR_SSL_CERT => '/path/to/cert.pem',
+ *   ),
  * );
  * @endcode
  *
@@ -161,7 +191,7 @@
  *     'sessions'  => 'shared.',
  *     'role'      => 'shared.',
  *     'authmap'   => 'shared.',
- *   );
+ *   ),
  * @endcode
  * NOTE: MySQL and SQLite's definition of a schema is a database.
  *
@@ -197,6 +227,19 @@
  *     'password' => 'password',
  *     'host' => 'localhost',
  *     'prefix' => '',
+ *   );
+ *   // mysql with SSL
+ *   $databases['default']['default'] = array(
+ *     'driver' => 'mysql',
+ *     'database' => 'databasename',
+ *     'username' => 'username',
+ *     'password' => 'password',
+ *     'host' => 'localhost',
+ *     'prefix' => '',
+ *     'pdo' => array(
+ *       PDO::MYSQL_ATTR_SSL_KEY => '/etc/ssl/mysql/key.pem',
+ *       PDO::MYSQL_ATTR_SSL_CERT => '/etc/ssl/mysql/cert.pem',
+ *     ),
  *   );
  *   $databases['default']['default'] = array(
  *     'driver' => 'pgsql',
