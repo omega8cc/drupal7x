@@ -3192,17 +3192,29 @@ function node_permissions_get_configured_types() {
  *   arrays of grants for those realms.
  */
 function node_access_grants($op, $account = NULL) {
+  $grants = &drupal_static(__FUNCTION__);
+
+  if (!isset($grants)) {
+    $grants = array();
+  }
 
   if (!isset($account)) {
     $account = $GLOBALS['user'];
   }
 
-  // Fetch node access grants from other modules.
-  $grants = module_invoke_all('node_grants', $account, $op);
-  // Allow modules to alter the assigned grants.
-  drupal_alter('node_grants', $grants, $account, $op);
+  // Grants are unique only per account and per operation on any single request.
+  $cid = $account->uid . ':' . $op;
 
-  return array_merge(array('all' => array(0)), $grants);
+  if (!isset($grants[$cid])) {
+    // Fetch node access grants from other modules.
+    $grants[$cid] = module_invoke_all('node_grants', $account, $op);
+    // Allow modules to alter the assigned grants.
+    drupal_alter('node_grants', $grants[$cid], $account, $op);
+
+    $grants[$cid] = array_merge(array('all' => array(0)), $grants[$cid]);
+  }
+
+  return $grants[$cid];
 }
 
 /**
