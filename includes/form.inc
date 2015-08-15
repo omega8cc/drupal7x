@@ -1699,7 +1699,10 @@ function form_get_error($element) {
  * Flags an element as having an error.
  */
 function form_error(&$element, $message = '') {
-  form_set_error(implode('][', $element['#parents']), $message);
+  $id = $element['#id'];
+  $element['#prefix'] = "<a id = '$id-error' class = 'element-invisible element-focusable'>$message</a>";
+  $link = l($message,current_path(), array("fragment" => "$id-error", 'absolute'=> TRUE, 'html'=>TRUE,));
+  form_set_error(implode('][', $element['#parents']), $link);
 }
 
 /**
