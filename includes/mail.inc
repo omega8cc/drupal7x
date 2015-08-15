@@ -104,8 +104,8 @@ define('MAIL_LINE_ENDINGS', isset($_SERVER['WINDIR']) || (isset($_SERVER['SERVER
  *   Language object to use to compose the e-mail.
  * @param $params
  *   Optional parameters to build the e-mail.
- * @param $from
- *   Sets From to this value, if given.
+ * @param string|null $reply
+ *   Optional e-mail address to be used to answer.
  * @param $send
  *   If TRUE, drupal_mail() will call drupal_mail_system()->mail() to deliver
  *   the message, and store the result in $message['result']. Modules
@@ -119,8 +119,8 @@ define('MAIL_LINE_ENDINGS', isset($_SERVER['WINDIR']) || (isset($_SERVER['SERVER
  *   written to the watchdog. (Success means nothing more than the message being
  *   accepted at php-level, which still doesn't guarantee it to be delivered.)
  */
-function drupal_mail($module, $key, $to, $language, $params = array(), $from = NULL, $send = TRUE) {
-  $default_from = variable_get('site_mail', ini_get('sendmail_from'));
+function drupal_mail($module, $key, $to, $language, $params = array(), $reply = NULL, $send = TRUE) {
+  $from = variable_get('site_mail', ini_get('sendmail_from'));
 
   // Bundle up the variables into a structured array for altering.
   $message = array(
@@ -128,7 +128,8 @@ function drupal_mail($module, $key, $to, $language, $params = array(), $from = N
     'module'   => $module,
     'key'      => $key,
     'to'       => $to,
-    'from'     => isset($from) ? $from : $default_from,
+    'from'     => $from,
+    'reply-to' => isset($reply) ? $reply : $from,
     'language' => $language,
     'params'   => $params,
     'send'     => TRUE,
@@ -143,14 +144,14 @@ function drupal_mail($module, $key, $to, $language, $params = array(), $from = N
     'Content-Transfer-Encoding' => '8Bit',
     'X-Mailer'                  => 'Drupal'
   );
-  if ($default_from) {
+  if ($from) {
     // To prevent e-mail from looking like spam, the addresses in the Sender and
     // Return-Path headers should have a domain authorized to use the originating
     // SMTP server.
-    $headers['From'] = $headers['Sender'] = $headers['Return-Path'] = $default_from;
+    $headers['From'] = $headers['Sender'] = $headers['Return-Path'] = $from;
   }
-  if ($from) {
-    $headers['From'] = $from;
+  if ($reply) {
+    $headers['Reply-to'] = $reply;
   }
   $message['headers'] = $headers;
 
