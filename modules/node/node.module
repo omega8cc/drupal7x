@@ -3339,7 +3339,7 @@ function _node_query_node_access_alter($query, $type) {
     return;
   }
 
-  $tables = $query->getTables();
+  $tables = &$query->getTables();
   $base_table = $query->getMetaData('base_table');
   // If no base table is specified explicitly, search for one.
   if (!$base_table) {
@@ -3423,20 +3423,22 @@ function _node_query_node_access_alter($query, $type) {
       $grant_conditions = db_or();
       // If any grant exists for the specified user, then user has access
       // to the node for the specified operation.
+      $counter = 0;
       foreach ($grants as $realm => $gids) {
         foreach ($gids as $gid) {
           $grant_conditions->condition(db_and()
-            ->condition('na.gid', $gid)
-            ->condition('na.realm', $realm)
+            ->where('na.gid = :gid_' . $counter . '_' . $gid, array(':gid_' . $counter . '_' . $gid => $gid))
+            ->where('na.realm = :realm_' . $counter . '_' . $gid, array(':realm_' . $counter . '_' . $gid => $realm))
           );
         }
+        $counter++;
       }
 
       // Attach conditions to the subquery for nodes.
       if (count($grant_conditions->conditions())) {
         $subquery->condition($grant_conditions);
       }
-      $subquery->condition('na.grant_' . $op, 1, '>=');
+      $subquery->where('na.grant_' . $op . ' >= 1');
       $field = 'nid';
       // Now handle entities.
       if ($type == 'entity') {
@@ -3452,7 +3454,17 @@ function _node_query_node_access_alter($query, $type) {
       }
       // Otherwise attach it to the node query itself.
       else {
-        $query->exists($subquery);
+        if (empty($tableinfo['join type'])) {
+          // If we are looking at the main table of the query, apply the
+          // subquery directly.
+          $query->exists($subquery);
+        }
+        else {
+          // If we are looking at a joined table, add the node access check
+          // to the join condition.
+          $tables[$nalias]['condition'] .= ' AND EXISTS(' . (string)$subquery . ')';
+          $tables[$nalias]['arguments'] += $subquery->arguments();
+        }
       }
     }
   }
