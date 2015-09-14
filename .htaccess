@@ -109,6 +109,94 @@ DirectoryIndex index.php index.html index.htm
   # uncomment the following line:
   # RewriteBase /
 
+# AIS: Adaptive Image Style
+  RewriteBase /
+  RewriteCond %{REQUEST_URI} ^(.+)/files/styles/adaptive/(.+)$
+  RewriteCond %{REQUEST_URI} !/modules/image/sample.png
+  RewriteCond %{HTTP_COOKIE} ais=([a-z0-9_-]+)
+  RewriteRule ^(.+)/files/styles/adaptive/(.+)$ $1/files/styles/%1/$2 [R=302,L]
+
+  ### BOOST START ###
+  AddDefaultCharset utf-8
+  <FilesMatch "\.((html|xml|json)|((html|xml|json)\.gz))$">
+    <IfModule mod_expires.c>
+      ExpiresDefault A1
+    </IfModule>
+    <IfModule mod_headers.c>
+      Header set Expires "Tue, 24 Jan 1984 08:00:00 GMT"
+      Header set Cache-Control "no-store, no-cache, must-revalidate, post-check=0, pre-check=0"
+    </IfModule>
+  </FilesMatch>
+  <IfModule mod_mime.c>
+    AddCharset utf-8 .html
+    AddCharset utf-8 .xml
+    AddCharset utf-8 .json
+    AddCharset utf-8 .css
+    AddCharset utf-8 .js
+    AddEncoding gzip .gz
+  </IfModule>
+  <FilesMatch "\.(html|html\.gz)$">
+    ForceType text/html
+  </FilesMatch>
+  <FilesMatch "\.(xml|xml\.gz)$">
+    ForceType text/xml
+  </FilesMatch>
+  <FilesMatch "\.((json|js)|((json|js)\.gz))$">
+    ForceType text/javascript
+  </FilesMatch>
+  <FilesMatch "\.(css|css\.gz)$">
+    ForceType text/css
+  </FilesMatch>
+
+  # Gzip Cookie Test
+  RewriteRule boost-gzip-cookie-test\.html  cache/perm/boost-gzip-cookie-test\.html\.gz [L,T=text/html]
+
+  # GZIP - Cached css & js files
+  RewriteCond %{HTTP_COOKIE} !(boost-gzip)
+  RewriteCond %{HTTP:Accept-encoding} !gzip
+  RewriteRule .* - [S=2]
+  RewriteCond %{DOCUMENT_ROOT}/cache/perm/%{HTTP_HOST}%{REQUEST_URI}_\.css\.gz -s
+  RewriteRule .* cache/perm/%{HTTP_HOST}%{REQUEST_URI}_\.css\.gz [L,QSA,T=text/css]
+  RewriteCond %{DOCUMENT_ROOT}/cache/perm/%{HTTP_HOST}%{REQUEST_URI}_\.js\.gz -s
+  RewriteRule .* cache/perm/%{HTTP_HOST}%{REQUEST_URI}_\.js\.gz [L,QSA,T=text/javascript]
+
+  # NORMAL - Cached css & js files
+  RewriteCond %{DOCUMENT_ROOT}/cache/perm/%{HTTP_HOST}%{REQUEST_URI}_\.css -s
+  RewriteRule .* cache/perm/%{HTTP_HOST}%{REQUEST_URI}_\.css [L,QSA,T=text/css]
+  RewriteCond %{DOCUMENT_ROOT}/cache/perm/%{HTTP_HOST}%{REQUEST_URI}_\.js -s
+  RewriteRule .* cache/perm/%{HTTP_HOST}%{REQUEST_URI}_\.js [L,QSA,T=text/javascript]
+
+  # Caching for anonymous users
+  # Skip boost IF not get request OR uri has wrong dir OR cookie is set OR https request
+  RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$ [OR]
+  RewriteCond %{REQUEST_URI} (^/(admin|cache|misc|modules|sites|system|openid|themes|node/add))|(/(comment/reply|edit|user|user/(login|password|register))$) [OR]
+  RewriteCond %{HTTP_COOKIE} DRUPAL_UID [OR]
+  RewriteCond %{HTTPS} on
+  RewriteRule .* - [S=7]
+
+  # GZIP
+  RewriteCond %{HTTP_COOKIE} !(boost-gzip)
+  RewriteCond %{HTTP:Accept-encoding} !gzip
+  RewriteRule .* - [S=3]
+  RewriteCond %{DOCUMENT_ROOT}/cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.html\.gz -s
+  RewriteRule .* cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.html\.gz [L,T=text/html]
+  RewriteCond %{DOCUMENT_ROOT}/cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.xml\.gz -s
+  RewriteRule .* cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.xml\.gz [L,T=text/xml]
+  RewriteCond %{DOCUMENT_ROOT}/cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.json\.gz -s
+  RewriteRule .* cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.json\.gz [L,T=text/javascript]
+
+  # NORMAL
+  RewriteCond %{DOCUMENT_ROOT}/cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.html -s
+  RewriteRule .* cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.html [L,T=text/html]
+  RewriteCond %{DOCUMENT_ROOT}/cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.xml -s
+  RewriteRule .* cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.xml [L,T=text/xml]
+  RewriteCond %{DOCUMENT_ROOT}/cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.json -s
+  RewriteRule .* cache/normal/%{HTTP_HOST}%{REQUEST_URI}_%{QUERY_STRING}\.json [L,T=text/javascript]
+
+  ### BOOST END ###
+
+# $Id: boosted2.txt,v 1.1.2.24 2010/03/17 05:43:15 mikeytown2 Exp $
+
   # Pass all requests not referring directly to files in the filesystem to
   # index.php. Clean URLs are handled in drupal_environment_initialize().
   RewriteCond %{REQUEST_FILENAME} !-f
