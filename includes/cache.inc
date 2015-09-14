@@ -5,73 +5,32 @@
  * Functions and interfaces for cache handling.
  */
 
-class DrupalCache {
-  static protected $cacheObjects = array();
-
-  /**
-   * Gets the cache object for a cache bin.
-   *
-   * By default, this returns an instance of the DrupalDatabaseCache class.
-   * Classes implementing DrupalCacheInterface can register themselves both as a
-   * default implementation and for specific bins.
-   *
-   * @param string $bin
-   *   The cache bin for which the cache object should be returned.
-   *
-   * @return DrupalCacheInterface
-   *   The cache object associated with the specified bin.
-   *
-   * @see DrupalCacheInterface
-   */
-  static public function getObject($bin) {
-    // We do not use drupal_static() here because we do not want to change the
-    // storage of a cache bin mid-request.
-    if (!isset(self::$cacheObjects[$bin])) {
-      $class = variable_get('cache_class_' . $bin);
-      if (!isset($class)) {
-        $class = variable_get('cache_default_class', 'DrupalDatabaseCache');
-      }
-      self::$cacheObjects[$bin] = new $class($bin);
-    }
-    return self::$cacheObjects[$bin];
-  }
-
-  /**
-   * Called on transaction rollback.
-   *
-   * @param int $depth
-   *   The transaction depth rolled back to.
-   */
-  static public function rollback($depth = NULL) {
-    foreach (self::$cacheObjects as $cache_object) {
-      if ($cache_object instanceOf DrupalTransactionalCacheInterface) {
-        $cache_object->rollback($depth);
-      }
-    }
-  }
-
-  /**
-   * Called on transaction commit.
-   *
-   * @param int $depth
-   *   The transaction depth committed to.
-   */
-  static public function commit($depth = NULL) {
-    foreach (self::$cacheObjects as $cache_object) {
-      if ($cache_object instanceOf DrupalTransactionalCacheInterface) {
-        $cache_object->commit($depth);
-      }
-    }
-  }
-}
-
 /**
- * Wrapper for DrupalCache::getObject().
+ * Gets the cache object for a cache bin.
  *
- * @see DrupalCache::getObject()
+ * By default, this returns an instance of the DrupalDatabaseCache class.
+ * Classes implementing DrupalCacheInterface can register themselves both as a
+ * default implementation and for specific bins.
+ *
+ * @param $bin
+ *   The cache bin for which the cache object should be returned.
+ * @return DrupalCacheInterface
+ *   The cache object associated with the specified bin.
+ *
+ * @see DrupalCacheInterface
  */
 function _cache_get_object($bin) {
-  return DrupalCache::getObject($bin);
+  // We do not use drupal_static() here because we do not want to change the
+  // storage of a cache bin mid-request.
+  static $cache_objects;
+  if (!isset($cache_objects[$bin])) {
+    $class = variable_get('cache_class_' . $bin);
+    if (!isset($class)) {
+      $class = variable_get('cache_default_class', 'DrupalDatabaseCache');
+    }
+    $cache_objects[$bin] = new $class($bin);
+  }
+  return $cache_objects[$bin];
 }
 
 /**
@@ -341,37 +300,6 @@ interface DrupalCacheInterface {
    *   TRUE if the cache bin specified is empty.
    */
   function isEmpty();
-}
-
-/**
- * Defines an interface for transaction aware cache implementations.
- *
- * All cache implementations that does not use the default database as a cache
- * storage should implement this interface.
- *
- * The implementation is responsible for buffering write cache operations until
- * either the buffer is cleared or flushed. The cache implementations is also
- * responsible for handling nested transaction properly.
- *
- * @see _cache_get_object()
- * @see DrupalDatabaseCache
- */
-interface DrupalTransactionalCacheInterface extends DrupalCacheInterface {
-  /**
-   * Called on transaction rollback.
-   *
-   * @param int $depth
-   *   The transaction depth rolled back to.
-   */
-  function rollback($depth);
-
-  /**
-   * Called on transaction commit.
-   *
-   * @param int $depth
-   *   The transaction depth committed to.
-   */
-  function commit($depth);
 }
 
 /**

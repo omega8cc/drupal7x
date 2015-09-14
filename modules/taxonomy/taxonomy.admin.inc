@@ -445,21 +445,8 @@ function taxonomy_overview_terms_submit($form, &$form_state) {
     return;
   }
 
-  // Sort terms based on weight and on the current order in which they are
-  // displayed on the page.
-  $current_order = 0;
-  foreach ($form_state['values'] as $tid => &$value) {
-    if (isset($form[$tid]['#term'])) {
-      $value['current_order'] = $current_order++;
-    }
-  }
-  uasort($form_state['values'], 'taxonomy_overview_sort');
-  // Clean up.
-  foreach ($form_state['values'] as $tid => &$value) {
-    if (isset($form[$tid]['#term'])) {
-      unset($value['current_order']);
-    }
-  }
+  // Sort term order based on weight.
+  uasort($form_state['values'], 'drupal_sort_weight');
 
   $vocabulary = $form['#vocabulary'];
   $hierarchy = 0; // Update the current hierarchy type as we go.
@@ -546,32 +533,6 @@ function taxonomy_overview_terms_submit($form, &$form_state) {
     taxonomy_vocabulary_save($vocabulary);
   }
   drupal_set_message(t('The configuration options have been saved.'));
-}
-
-/**
- * Sorts a structured array by the 'weight' and 'current_order' elements.
- *
- * Callback for uasort() within taxonomy_overview_terms_submit().
- *
- * @param $a
- *   First item for comparison. The compared items should be associative arrays
- *   that optionally include 'weight' or 'current_order' elements. If these
- *   elements are missing, a default value of 0 will be used.
- * @param $b
- *   Second item for comparison.
- */
-function taxonomy_overview_sort($a, $b) {
-  // First try to sort by the defined weight.
-  if ($result = drupal_sort_weight($a, $b)) {
-    return $result;
-  }
-  // If the weights match, sort by the current order instead.
-  $a_order = (is_array($a) && isset($a['current_order'])) ? $a['current_order'] : 0;
-  $b_order = (is_array($b) && isset($b['current_order'])) ? $b['current_order'] : 0;
-  if ($a_order == $b_order) {
-    return 0;
-  }
-  return ($a_order < $b_order) ? -1 : 1;
 }
 
 /**
