@@ -1959,7 +1959,12 @@ function file_unmanaged_save_data($data, $destination = NULL, $replace = FILE_EX
   }
 
   // Move the file to its final destination.
-  return file_unmanaged_move($temp_name, $destination, $replace);
+  $return = file_unmanaged_move($temp_name, $destination, $replace);
+  // Remove a possibly stale temporary file if the move operation failed.
+  if ($return === FALSE && file_exists($temp_name)) {
+    @drupal_unlink($temp_name);
+  }
+  return $return;
 }
 
 /**
