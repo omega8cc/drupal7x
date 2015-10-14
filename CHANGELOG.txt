@@ -1,4 +1,65 @@
 
+Drupal 7.40, xxxx-xx-xx (development version)
+-----------------------
+- Made Drupal's code for parsing .info files run much faster and use much less
+  memory.
+- Prevented drupal_http_request() from returning an error when it receives a
+  201 through 206 HTTP status code.
+- Added support for autoloading traits via the registry on sites running PHP
+  5.4 or higher.
+- Allowed the user-picture.tpl.php theme template to have HTML classes besides
+  the default "user-picture" class printed in it (markup change).
+- Fixed the URL text filter to convert e-mail addresses with plus signs into
+  mailto: links.
+- Added alternate text to file icons displayed by the File module, to improve
+  accessibility (string change, and minor API addition to theme_file_icon()).
+- Changed one-time login link failure messages to be displayed as errors or
+  warnings as appropriate, rather than as regular status messages (minor UI
+  change and data structure change).
+- Changed the default settings.php configuration to exclude private files from
+  the "404_fast_paths" behavior.
+- Changed the page that displays filter tips for a particular text format, for
+  example filter/tips/full_html, to return "page not found" or "access denied"
+  if the format does not exist or the user does not have access to it. This
+  change adds a new menu item to the Filter module's hook_menu() entry (minor
+  data structure change).
+- Added a new hook, hook_block_cid_parts_alter(), to allow modules to alter the
+  cache keys used for caching a particular block.
+- Made drupal_set_message() display and return messages when "0" is passed in
+  as the message to set.
+- Fixed non-functional "Files displayed by default" setting on file fields.
+- The "worker callback" provided in hook_cron_queue_info() and the "finished"
+  callback specified during batch processing can now be any PHP callable
+  instead of just functions.
+- Prevented drupal_set_time_limit() from decreasing the time limit in the case
+  where the PHP maximum execution time is already unlimited.
+- Changed the default thousand marker for numeric fields from a space ("1 000")
+  to nothing ("1000") (minor UI change: https://www.drupal.org/node/1388376).
+- Prevented malformed theme .info files (without a "name" key) from causing
+  exceptions during menu rebuilds. If an .info file without a "name" key is
+  found in a module or theme directory, Drupal will now use the module or
+  theme's machine name as the display name instead.
+- Made the format column in the {date_format_locale} database table
+  case-sensitive, to match the equivalent column in the {date_formats} table.
+- Fixed a bug in the Statistics module that caused JavaScript files attached to
+  a node while it is being viewed to be omitted from the page.
+- Added an optional 'project:' prefix that can be added to dependencies in a
+  module's .info file to indicate which project the dependency resides in (API
+  addition: https://www.drupal.org/node/2299747).
+- Fixed various bugs that occurred after hooks were invoked early in the Drupal
+  bootstrap and that caused module_implements() and drupal_alter() to cache an
+  incomplete set of hook implementations for later use.
+- Set the X-Content-Type-Options header to "nosniff" when possible, to prevent
+  certain web browsers from picking an unsafe MIME type.
+- Prevented the database API from executing multiple queries at once on MySQL,
+  if the site's PHP version is new enough to do so. This is a secondary defense
+  against SQL injection (API change: https://www.drupal.org/node/2463973).
+- Fixed a bug in the Drupal 6 to Drupal 7 upgrade path which caused the upgrade
+  to fail when there were multiple file records pointing to the same file.
+- Numerous small bug fixes.
+- Numerous API documentation improvements.
+- Additional automated test coverage.
+
 Drupal 7.39, 2015-08-19
 -----------------------
 - Fixed security issues (multiple vulnerabilities). See SA-CORE-2015-003.
