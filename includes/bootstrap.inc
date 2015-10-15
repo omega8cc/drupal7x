@@ -8,7 +8,7 @@
 /**
  * The current system version.
  */
-define('VERSION', '7.40-dev');
+define('VERSION', '7.40');
 
 /**
  * Core API compatibility.
@@ -1069,7 +1069,7 @@ function drupal_page_get_cache($check_only = FALSE) {
  * Determines the cacheability of the current page.
  *
  * @param $allow_caching
- *   Set to FALSE if you want to prevent this page to get cached.
+ *   Set to FALSE if you want to prevent this page from being cached.
  *
  * @return
  *   TRUE if the current page can be cached, FALSE otherwise.
@@ -2990,7 +2990,9 @@ function ip_address() {
  * Gets the schema definition of a table, or the whole database schema.
  *
  * The returned schema will include any modifications made by any
- * module that implements hook_schema_alter().
+ * module that implements hook_schema_alter(). To get the schema without
+ * modifications, use drupal_get_schema_unprocessed().
+ *
  *
  * @param $table
  *   The name of the table. If not given, the schema of all tables is returned.
