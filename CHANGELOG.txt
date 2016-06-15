@@ -1,15 +1,7 @@
 
-Drupal 7.44, xxxx-xx-xx (development version)
+Drupal 7.44, 2016-06-15
 -----------------------
-- Changed wording on the Update Manager settings page to clarify that the
-  option to check for disabled module updates also applies to uninstalled
-  modules (administrative-facing translatable string change).
-- Changed the help text when editing menu links and configuring URL redirect
-  actions so that it does not reference "Drupal" or the drupal.org website
-  (administrative-facing translatable string change).
-- Fixed a regression introduced in Drupal 7.43 that allowed files uploaded by
-  anonymous users to be lost after form validation errors, and that also caused
-  regressions with certain contributed modules.
+- Fixed security issues (privilege escalation). See SA-CORE-2016-002.
 
 Drupal 7.43, 2016-02-24
 -----------------------
