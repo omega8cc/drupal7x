@@ -1,5 +1,5 @@
 
-Drupal 7.45, xxxx-xx-xx (development version)
+Drupal 7.44.1 (BOA merge from 7.x head)
 -----------------------
 - Removed meaningless post-check=0 and pre-check=0 cache control headers from
   Drupal HTTP responses.
