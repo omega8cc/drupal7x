@@ -20023,7 +20023,7 @@ db_insert('vocabulary')->fields(array(
   'vid' => '9',
   'name' => 'vocabulary 9 (i=8)',
   'description' => 'description of vocabulary 9 (i=8)',
-  'help' => 'help for vocabulary 8 (i=8)',
+  'help' => 'help for vocabulary 9 (i=8)',
   'relations' => '1',
   'hierarchy' => '2',
   'multiple' => '0',

@@ -19,7 +19,7 @@ Drupal 7.50, xxxx-xx-xx (development version)
   regressions with certain contributed modules.
 - Fixed the locale safety check that is used to ensure that translations are
   safe to allow for tokens in the href/src attributes of translated strings.
-- Implemented various fixes for automated test failures on PHP 5.4+.
+- Implemented various fixes for automated test failures on PHP 5.4+ and PHP 7.
 - Improved performance of queries on authmap table.
 - Numerous small bugfixes.
 - Numerous API documentation improvements.
@@ -35,9 +35,23 @@ Drupal 7.50, xxxx-xx-xx (development version)
 - Fixed robots.txt to allow search engines to access CSS, JavaScript and image
   files.
 - Fixed handling of missing files and functions inside the registry.
-- Fixed various PHP 5.4 test failures.
-- Fixed various PHP 7 test failures.
 - Fixed various PHP 7 problems.
+- Fixed various bugs with PHP 5.5 imagerotate(), including when incorrect color
+  indices are passed in.
+- Changed the {history} table's node ID field to be an unsigned integer, to
+  match the same field in the {node} table and to prevent errors with very
+  large node IDs.
+- Added an explicit page callback to the "admin/people/create" menu item in the
+  User module (minor data structure change). Previously this automatically
+  inherited the page callback from the parent "admin/people" menu item, which
+  broke contributed modules that override the "admin/people" page.
+- Fixed a bug which caused ip_address() to return nothing when the client IP
+  address and proxy IP address are the same.
+- Made method="get" forms work inside the administrative overlay. The fix adds
+  a new hidden field to these forms when they appear inside the overlay (minor
+  data structure change).
+- Increased maxlength of menu link title input fields in the node form and
+  menu link form from 128 to 255 characters.
 
 Drupal 7.44, 2016-06-15
 -----------------------
