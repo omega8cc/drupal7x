@@ -2663,15 +2663,6 @@ function drupal_deliver_html_page($page_callback_result) {
     drupal_add_http_header('X-Frame-Options', $frame_options);
   }
 
-  // By default, do not allow the site to be rendered in an iframe on another
-  // domain, but provide a variable to override this. If the code running for
-  // this page request already set the X-Frame-Options header earlier, don't
-  // overwrite it here.
-  $frame_options = variable_get('x_frame_options', 'SAMEORIGIN');
-  if ($frame_options && is_null(drupal_get_http_header('X-Frame-Options'))) {
-    drupal_add_http_header('X-Frame-Options', $frame_options);
-  }
-
   // Menu status constants are integers; page content is a string or array.
   if (is_int($page_callback_result)) {
     // @todo: Break these up into separate functions?
@@ -5738,7 +5729,7 @@ function drupal_system_listing($mask, $directory, $key = 'name', $min_depth = 1)
   // For SimpleTest to be able to test modules packaged together with a
   // distribution we need to include the profile of the parent site (in which
   // test runs are triggered).
-  if (drupal_test_running()) {
+  if (drupal_valid_test_ua()) {
     $testing_profile = variable_get('simpletest_parent_profile', FALSE);
     if ($testing_profile && $testing_profile != $profile) {
       $profiles[] = $testing_profile;
