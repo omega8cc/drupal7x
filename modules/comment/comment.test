@@ -1522,7 +1522,7 @@ class CommentNodeAccessTest extends CommentHelperCase {
   }
 
   function setUp() {
-    DrupalWebTestCase::setUp('comment', 'search', 'node_access_test');
+    parent::setUp('search', 'node_access_test');
     node_access_rebuild();
 
     // Create users and test node.
