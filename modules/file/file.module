@@ -1067,6 +1067,7 @@ function file_get_file_references($file, $field = NULL, $age = FIELD_LOAD_REVISI
     $usage_list = file_usage_list($file);
     $file_usage_list = isset($usage_list['file']) ? $usage_list['file'] : array();
     foreach ($file_usage_list as $entity_type => $entity_ids) {
+      $entity_ids = array_keys($entity_ids);
       $entity_info = entity_get_info($entity_type);
       // The usage table contains usage of every revision. If we are looking
       // for every revision or the entity does not support revisions then
