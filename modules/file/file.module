@@ -140,7 +140,7 @@ function file_file_download($uri, $field_type = 'file') {
   }
 
   // Find out which (if any) fields of this type contain the file.
-  $references = file_get_file_references($file, NULL, FIELD_LOAD_CURRENT, $field_type);
+  $references = file_get_file_references($file, NULL, FIELD_LOAD_CURRENT, $field_type, FALSE);
 
   // Stop processing if there are no references in order to avoid returning
   // headers for files controlled by other modules. Make an exception for
@@ -1053,12 +1053,19 @@ function file_icon_map($file) {
  *   to fields of the given type. If both $field and $field_type is given but
  *   $field is not the same type as $field_type, an empty array will be
  *   returned.
+* @param $check_access
+ *   (optional) A boolean that specifies whether the permissions of the current
+ *   user should be checked when retrieving references. If FALSE, all
+ *   references to the file are returned. If TRUE, only references from
+ *   entities that the current user has access to are returned. Defaults to
+ *   TRUE for backwards compatibility reasons, but FALSE is recommended for
+ *   most situations.
  *
  * @return
  *   A multidimensional array. The keys are field_name, entity_type,
  *   entity_id and the value is an entity referencing this file.
  */
-function file_get_file_references($file, $field = NULL, $age = FIELD_LOAD_REVISION, $field_type = 'file') {
+function file_get_file_references($file, $field = NULL, $age = FIELD_LOAD_REVISION, $field_type = 'file', $check_access = TRUE) {
   $references = &drupal_static(__FUNCTION__, array());
   $field_columns = &drupal_static(__FUNCTION__ . ':field_columns', array());
 
