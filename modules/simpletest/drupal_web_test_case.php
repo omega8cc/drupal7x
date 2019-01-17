@@ -3027,7 +3027,7 @@ class DrupalWebTestCase extends DrupalTestCase {
     if (!$message) {
       $message = t('Raw "@raw" found', array('@raw' => $raw));
     }
-    return $this->assert(strpos($this->drupalGetContent(), $raw) !== FALSE, $message, $group);
+    return $this->assert(strpos($this->drupalGetContent(), (string) $raw) !== FALSE, $message, $group);
   }
 
   /**
@@ -3047,7 +3047,7 @@ class DrupalWebTestCase extends DrupalTestCase {
     if (!$message) {
       $message = t('Raw "@raw" not found', array('@raw' => $raw));
     }
-    return $this->assert(strpos($this->drupalGetContent(), $raw) === FALSE, $message, $group);
+    return $this->assert(strpos($this->drupalGetContent(), (string) $raw) === FALSE, $message, $group);
   }
 
   /**
