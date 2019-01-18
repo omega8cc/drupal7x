@@ -2101,6 +2101,9 @@ function theme_table($variables) {
         // Add odd/even class
         if (!$no_striping) {
           $class = $flip[$class];
+          if (!is_array($attributes['class'])) {
+            $attributes['class'] = array();
+          }
           $attributes['class'][] = $class;
         }
 
