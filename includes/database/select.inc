@@ -1492,7 +1492,7 @@ class SelectQuery extends Query implements SelectQueryInterface {
       $count->distinct = FALSE;
     }
 
-    $query = $this->connection->select($count);
+    $query = $this->connection->select($count, NULL, $this->queryOptions);
     $query->addExpression('COUNT(*)');
 
     return $query;
