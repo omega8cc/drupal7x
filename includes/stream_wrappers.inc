@@ -372,17 +372,29 @@ abstract class DrupalLocalStreamWrapper implements DrupalStreamWrapperInterface 
     if (!isset($uri)) {
       $uri = $this->uri;
     }
-    $path = $this->getDirectoryPath() . '/' . $this->getTarget($uri);
-    $realpath = realpath($path);
-    if (!$realpath) {
-      // This file does not yet exist.
-      $realpath = realpath(dirname($path)) . '/' . drupal_basename($path);
-    }
-    $directory = realpath($this->getDirectoryPath());
-    if (!$realpath || !$directory || strpos($realpath, $directory) !== 0) {
+    // Get the target path relative to the files repository.
+    $target = DIRECTORY_SEPARATOR . $this->getTarget($uri);
+    // Get the files repository directory.
+    $repository = realpath($this->getDirectoryPath());
+    // Get the target directory.
+    $target_dir = realpath(dirname($repository . $target)) . DIRECTORY_SEPARATOR;
+    // Get the target name, without any directory components.
+    $target_name = drupal_basename($repository . $target);
+    // A directory component can point outside its parent directory if the path
+    // separator ('/' or '\') is followed by '..' to reference the parent
+    // directory.
+    $pattern = '@(/|\\\\)\.\.@';
+    // Check whether the target can possibly point outside its parent.
+    $traversal = preg_match($pattern, $target);
+    // Check whether the target dir exists within the files repository.
+    $subdirectory = strpos($target_dir, $repository . DIRECTORY_SEPARATOR) === 0;
+    if ($traversal && !$subdirectory) {
+      // If the target path contains directory-traversal parts such as '/..' and
+      // does not resolve to a subdirectory of the repository, then return FALSE
+      // to avoid a possible exploit.
       return FALSE;
     }
-    return $realpath;
+    return $target_dir . $target_name;
   }
 
   /**

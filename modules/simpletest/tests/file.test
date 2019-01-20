@@ -2826,4 +2826,40 @@ class StreamWrapperTest extends DrupalWebTestCase {
       $this->assertEqual(get_class($e), 'TYPO3\PharStreamWrapper\Exception', 'Expected exception thrown when accessing an invalid phar file.');
     }
   }
+
+  /**
+   * Tests that symlinks are supported within the files directory.
+   */
+  function testFileDirectorySymlinks() {
+    // Temporarily unset the file_temporary_path variable.
+    $file_temporary_path = variable_get('file_temporary_path', NULL);
+    variable_del('file_temporary_path');
+    // Now the return value of file_directory_temp() should be outside
+    // the public files directory.
+    $temp = file_directory_temp();
+    // Restore the file_temporary_path variable.
+    variable_set('file_temporary_path', $file_temporary_path);
+    $public = drupal_realpath('public://');
+    $dirname = $this->randomname(20);
+    $filename = $this->randomname(20);
+    // Create a randomly-named directory in the temp folder.
+    $temp_dir = drupal_realpath($temp) . DIRECTORY_SEPARATOR . $dirname;
+    drupal_mkdir($temp_dir);
+    // Create a symlink in the public files folder pointing to the
+    // newly-created directory.
+    $symlink = $public . DIRECTORY_SEPARATOR . $dirname;
+    symlink($temp_dir, $symlink);
+    // Copy a test file to the symlinked directory.
+    $source = current($this->drupalGetTestFiles('text'))->uri;
+    $destination = "public://$dirname/$filename";
+    file_unmanaged_copy($source, $destination, FILE_EXISTS_ERROR);
+    // Test that the real path of the copied file lies in the temp folder.
+    $realpath = drupal_realpath($destination);
+    $compare = $temp_dir . DIRECTORY_SEPARATOR . $filename;
+    $this->assertEqual($realpath, $compare, "drupal_realpath('$destination') returned '$realpath'; expected '$compare'");
+    // Clean up the mess.
+    file_unmanaged_delete($destination);
+    drupal_unlink($symlink);
+    drupal_rmdir($temp_dir);
+  }
 }
