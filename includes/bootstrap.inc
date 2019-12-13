@@ -2650,7 +2650,6 @@ function _drupal_bootstrap_configuration() {
   drupal_settings_initialize();
 
   // Sanitize unsafe keys from the request.
-  require_once DRUPAL_ROOT . '/includes/request-sanitizer.inc';
   DrupalRequestSanitizer::sanitize();
 }
 
