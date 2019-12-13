@@ -2516,6 +2516,7 @@ function drupal_bootstrap($phase = NULL, $new_phase = TRUE) {
 
       switch ($current_phase) {
         case DRUPAL_BOOTSTRAP_CONFIGURATION:
+          require_once DRUPAL_ROOT . '/includes/request-sanitizer.inc';
           _drupal_bootstrap_configuration();
           break;
 
