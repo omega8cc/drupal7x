@@ -12,6 +12,12 @@
  */
 define('MAIL_LINE_ENDINGS', isset($_SERVER['WINDIR']) || (isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Win32') !== FALSE) ? "\r\n" : "\n");
 
+
+/**
+ * Special characters, defined in RFC_2822.
+ */
+define('MAIL_RFC_2822_SPECIALS', '()<>[]:;@\,."');
+
 /**
  * Composes and optionally sends an e-mail message.
  *
@@ -104,8 +110,8 @@ define('MAIL_LINE_ENDINGS', isset($_SERVER['WINDIR']) || (isset($_SERVER['SERVER
  *   Language object to use to compose the e-mail.
  * @param $params
  *   Optional parameters to build the e-mail.
- * @param string|null $reply
- *   Optional e-mail address to be used to answer.
+ * @param $from
+ *   Sets From to this value, if given.
  * @param $send
  *   If TRUE, drupal_mail() will call drupal_mail_system()->mail() to deliver
  *   the message, and store the result in $message['result']. Modules
@@ -119,8 +125,8 @@ define('MAIL_LINE_ENDINGS', isset($_SERVER['WINDIR']) || (isset($_SERVER['SERVER
  *   written to the watchdog. (Success means nothing more than the message being
  *   accepted at php-level, which still doesn't guarantee it to be delivered.)
  */
-function drupal_mail($module, $key, $to, $language, $params = array(), $reply = NULL, $send = TRUE) {
-  $from = variable_get('site_mail', ini_get('sendmail_from'));
+function drupal_mail($module, $key, $to, $language, $params = array(), $from = NULL, $send = TRUE) {
+  $default_from = variable_get('site_mail', ini_get('sendmail_from'));
 
   // Bundle up the variables into a structured array for altering.
   $message = array(
@@ -128,8 +134,7 @@ function drupal_mail($module, $key, $to, $language, $params = array(), $reply = 
     'module'   => $module,
     'key'      => $key,
     'to'       => $to,
-    'from'     => $from,
-    'reply-to' => isset($reply) ? $reply : $from,
+    'from'     => isset($from) ? $from : $default_from,
     'language' => $language,
     'params'   => $params,
     'send'     => TRUE,
@@ -144,14 +149,19 @@ function drupal_mail($module, $key, $to, $language, $params = array(), $reply = 
     'Content-Transfer-Encoding' => '8Bit',
     'X-Mailer'                  => 'Drupal'
   );
-  if ($from) {
+  if ($default_from) {
     // To prevent e-mail from looking like spam, the addresses in the Sender and
     // Return-Path headers should have a domain authorized to use the originating
     // SMTP server.
-    $headers['From'] = $headers['Sender'] = $headers['Return-Path'] = $from;
+    $headers['From'] = $headers['Sender'] = $headers['Return-Path'] = $default_from;
+
+    if (variable_get('mail_display_name_site_name', FALSE)) {
+      $display_name = variable_get('site_name', 'Drupal');
+      $headers['From'] = drupal_mail_format_display_name($display_name) . ' <' . $default_from . '>';
+    }
   }
-  if ($reply) {
-    $headers['Reply-to'] = $reply;
+  if ($from && $from != $default_from) {
+    $headers['From'] = $from;
   }
   $message['headers'] = $headers;
 
@@ -559,9 +569,58 @@ function drupal_html_to_text($string, $allowed_tags = NULL) {
 }
 
 /**
+ * Return a RFC-2822 compliant "display-name" component.
+ *
+ * The "display-name" component is used in mail header "Originator" fields
+ * (From, Sender, Reply-to) to give a human-friendly description of the
+ * address, i.e. From: My Display Name <xyz@example.org>. RFC-822 and
+ * RFC-2822 define its syntax and rules. This method gets as input a string
+ * to be used as "display-name" and formats it to be RFC compliant.
+ *
+ * @param string $string
+ *   A string to be used as "display-name".
+ *
+ * @return string
+ *   A RFC compliant version of the string, ready to be used as
+ *   "display-name" in mail originator header fields.
+ */
+function drupal_mail_format_display_name($string) {
+  // Make sure we don't process html-encoded characters. They may create
+  // unneeded trouble if left encoded, besides they will be correctly
+  // processed if decoded.
+  $string = decode_entities($string);
+
+  // If string contains non-ASCII characters it must be (short) encoded
+  // according to RFC-2047. The output of a "B" (Base64) encoded-word is
+  // always safe to be used as display-name.
+  $safe_display_name = mime_header_encode($string, TRUE);
+
+  // Encoded-words are always safe to be used as display-name because don't
+  // contain any RFC 2822 "specials" characters. However
+  // mimeHeaderEncode() encodes a string only if it contains any
+  // non-ASCII characters, and leaves its value untouched (un-encoded) if
+  // ASCII only. For this reason in order to produce a valid display-name we
+  // still need to make sure there are no "specials" characters left.
+  if (preg_match('/[' . preg_quote(MAIL_RFC_2822_SPECIALS) . ']/', $safe_display_name)) {
+
+    // If string is already quoted, it may or may not be escaped properly, so
+    // don't trust it and reset.
+    if (preg_match('/^"(.+)"$/', $safe_display_name, $matches)) {
+      $safe_display_name = str_replace(array('\\\\', '\\"'), array('\\', '"'), $matches[1]);
+    }
+
+    // Transform the string in a RFC-2822 "quoted-string" by wrapping it in
+    // double-quotes. Also make sure '"' and '\' occurrences are escaped.
+    $safe_display_name = '"' . str_replace(array('\\', '"'), array('\\\\', '\\"'), $safe_display_name) . '"';
+  }
+
+  return $safe_display_name;
+}
+
+/**
  * Wraps words on a single line.
  *
- * Callback for array_walk() winthin drupal_wrap_mail().
+ * Callback for array_walk() within drupal_wrap_mail().
  */
 function _drupal_wrap_mail_line(&$line, $key, $values) {
   // Use soft-breaks only for purely quoted or unindented text.
