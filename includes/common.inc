@@ -4548,7 +4548,13 @@ function drupal_get_js($scope = 'header', $javascript = NULL, $skip_alter = FALS
  * @see drupal_get_js()
  */
 function drupal_pre_render_scripts(array $elements) {
-  $preprocess_js = (variable_get('preprocess_js', FALSE) && !defined('MAINTENANCE_MODE'));
+  // Group and aggregate the items.
+  if (isset($elements['#group_callback'])) {
+    $elements['#groups'] = $elements['#group_callback']($elements['#items']);
+  }
+  if (isset($elements['#aggregate_callback'])) {
+    $elements['#aggregate_callback']($elements['#groups']);
+  }
 
   // A dummy query-string is added to filenames, to gain control over
   // browser-caching. The string changes on every update or full cache
