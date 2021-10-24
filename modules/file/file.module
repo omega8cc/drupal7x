@@ -256,7 +256,6 @@ function file_ajax_upload() {
   }
 
   // Add the special Ajax class if a new file was added.
-  $new_content_id = $form['#id'] . '-ajax-new-content';
   if (isset($form['#file_upload_delta']) && $current_file_count < $form['#file_upload_delta']) {
     $form[$current_file_count]['#attributes']['class'][] = 'ajax-new-content';
   }
@@ -264,7 +263,6 @@ function file_ajax_upload() {
   else {
     $form['#suffix'] = (isset($form['#suffix']) ? $form['#suffix'] : '') . '<span class="ajax-new-content"></span>';
   }
-  $form['#prefix'] .= '<span id="' . $new_content_id . '"></span>';
 
   $form['#prefix'] = (isset($form['#prefix']) ? $form['#prefix'] : '') . theme('status_messages');
 
@@ -273,8 +271,6 @@ function file_ajax_upload() {
   $settings = drupal_array_merge_deep_array($js['settings']['data']);
 
   $commands[] = ajax_command_replace(NULL, $output, $settings);
-  $commands[] = ajax_command_invoke('#' . $new_content_id, 'attr', array('tabIndex', '-1'));
-  $commands[] = ajax_command_invoke('#' . $new_content_id, 'focus');
   return array('#type' => 'ajax', '#commands' => $commands);
 }
 
