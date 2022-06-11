@@ -55,17 +55,17 @@ function file_requirements($phase) {
   if ($phase == 'runtime') {
     $description = NULL;
     $implementation = file_progress_implementation();
-
     // Test the web server identity.
-    if (isset($_SERVER['SERVER_SOFTWARE']) && preg_match("/Nginx/i", $_SERVER['SERVER_SOFTWARE'])) {
+    $server_software = $_SERVER['SERVER_SOFTWARE'];
+    if (isset($_SERVER['SERVER_SOFTWARE']) && preg_match("/Nginx/i", $server_software)) {
       $is_nginx = TRUE;
       $is_apache = FALSE;
       $fastcgi = FALSE;
     }
-    elseif (isset($_SERVER['SERVER_SOFTWARE']) && preg_match("/Apache/i", $_SERVER['SERVER_SOFTWARE'])) {
+    elseif (isset($_SERVER['SERVER_SOFTWARE']) && preg_match("/Apache/i", $server_software)) {
       $is_nginx = FALSE;
       $is_apache = TRUE;
-      $fastcgi = strpos($_SERVER['SERVER_SOFTWARE'], 'mod_fastcgi') !== FALSE || strpos($_SERVER["SERVER_SOFTWARE"], 'mod_fcgi') !== FALSE;
+      $fastcgi = strpos($server_software, 'mod_fastcgi') !== FALSE || strpos($server_software, 'mod_fcgi') !== FALSE;
     }
     else {
       $is_nginx = FALSE;
