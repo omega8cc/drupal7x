@@ -66,6 +66,16 @@ abstract class DrupalTestCase {
   public $useSetupModulesCache = FALSE;
 
   /**
+   * The original language.
+   */
+  protected $originalLanguage;
+
+  /**
+   * The original default language.
+   */
+  protected $originalLanguageDefault;
+
+  /**
    * Current results of this test case.
    *
    * @var Array
@@ -947,6 +957,36 @@ class DrupalWebTestCase extends DrupalTestCase {
    * The number of redirects followed during the handling of a request.
    */
   protected $redirect_count;
+
+  /**
+   * The original language URL.
+   */
+  protected $originalLanguageUrl;
+
+  /**
+   * The original active installation profile.
+   */
+  protected $originalProfile;
+
+  /**
+   * The original clean_url variable value.
+   */
+  protected $originalCleanUrl;
+
+  /**
+   * The public files directory created for testing purposes.
+   */
+  protected $public_files_directory;
+
+  /**
+   * The private files directory created for testing purposes.
+   */
+  protected $private_files_directory;
+
+  /**
+   * The temporary files directory created for testing purposes.
+   */
+  protected $temp_files_directory;
 
   /**
    * Constructor for DrupalWebTestCase.

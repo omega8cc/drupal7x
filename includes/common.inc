@@ -2609,7 +2609,14 @@ function l($text, $path, array $options = array()) {
       $use_theme = FALSE;
     }
   }
-  $path = drupal_strip_dangerous_protocols((string) $path);
+  $path = (string) $path;
+  // For backwards compatibility, do not strip a couple of specific javascript
+  // paths that are harmless.
+  // @see https://www.drupal.org/project/drupal/issues/3310081
+  $skip_js_paths = array('javascript:void()', 'javascript:void();', 'javascript:void(0)', 'javascript:void(0);');
+  if (!in_array(strtolower($path), $skip_js_paths)) {
+    $path = drupal_strip_dangerous_protocols($path);
+  }
   if ($use_theme) {
     return theme('link', array('text' => $text, 'path' => $path, 'options' => $options));
   }
@@ -2737,19 +2744,6 @@ function drupal_deliver_html_page($page_callback_result) {
     drupal_add_http_header('X-Frame-Options', $frame_options);
   }
   drupal_add_http_header('X-Content-Type-Options', 'nosniff');
-
-  if (variable_get('block_interest_cohort', TRUE)) {
-    $permissions_policy = drupal_get_http_header('Permissions-Policy');
-    if (is_null($permissions_policy)) {
-      drupal_add_http_header('Permissions-Policy', 'interest-cohort=()');
-    }
-    else {
-      // Only add interest-cohort if the header does not contain it already.
-      if (strpos($permissions_policy, 'interest-cohort') === FALSE) {
-        drupal_add_http_header('Permissions-Policy', 'interest-cohort=()', TRUE);
-      }
-    }
-  }
 
   // Menu status constants are integers; page content is a string or array.
   if (is_int($page_callback_result)) {
