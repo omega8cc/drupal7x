@@ -1279,6 +1279,10 @@ function fix_gpc_magic() {
  *
  * This uses the
  * @link http://php.net/manual/filter.filters.validate.php PHP e-mail validation filter. @endlink
+ * However, a module may override this by implementing
+ * hook_valid_email_address_alter(&$valid, $mail).
+ *
+ * @see hook_valid_email_address_alter()
  *
  * @param $mail
  *   A string containing an e-mail address.
@@ -1287,7 +1291,9 @@ function fix_gpc_magic() {
  *   TRUE if the address is in a valid format.
  */
 function valid_email_address($mail) {
-  return (bool)filter_var($mail, FILTER_VALIDATE_EMAIL);
+  $valid = (bool) filter_var($mail, FILTER_VALIDATE_EMAIL);
+  drupal_alter('valid_email_address', $valid, $mail);
+  return $valid;
 }
 
 /**
@@ -5650,7 +5656,8 @@ function drupal_cron_run() {
   drupal_alter('cron_queue_info', $queues);
 
   // Try to acquire cron lock.
-  if (!lock_acquire('cron', 240.0)) {
+  $cron_lock_expiration_timeout = variable_get('cron_lock_expiration_timeout', 900.0);
+  if (!lock_acquire('cron', $cron_lock_expiration_timeout)) {
     // Cron is still running normally.
     watchdog('cron', 'Attempting to re-run cron while it is already running.', array(), WATCHDOG_WARNING);
   }
