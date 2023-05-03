@@ -1,5 +1,8 @@
 # Ignore configuration files that may contain sensitive information.
 sites/*/settings*.php
+sites/*/local.settings.php
+sites/*/drushrc.php
+sites/*/drush/drushrc.php
 
 # Ignore paths that contain user-generated content.
 sites/*/files
