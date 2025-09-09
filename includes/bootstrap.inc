@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * PHP 8.4 removed E_STRICT. Some legacy code still references it in bitmasks.
+ * Define it as 0 if it doesn't exist so expressions like (E_ALL | E_STRICT)
+ * continue to evaluate safely across runtimes.
+ */
+if (!defined('E_STRICT')) {
+  define('E_STRICT', 0);
+}
+
+/**
  * @file
  * Functions that need to be loaded on every Drupal request.
  */
