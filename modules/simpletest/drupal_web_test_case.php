@@ -595,6 +595,7 @@ abstract class DrupalTestCase {
   public function errorHandler($severity, $message, $file = NULL, $line = NULL) {
     if ($severity & error_reporting()) {
       $error_map = array(
+        E_STRICT => 'Run-time notice',
         E_WARNING => 'Warning',
         E_NOTICE => 'Notice',
         E_CORE_ERROR => 'Core error',
