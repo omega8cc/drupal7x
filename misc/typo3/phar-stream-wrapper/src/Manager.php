@@ -91,8 +91,8 @@ class Manager
      */
     private function __construct(
         Behavior $behaviour,
-        ?Resolvable $resolver = null,
-        ?Collectable $collection = null
+        Resolvable $resolver = null,
+        Collectable $collection = null
     ) {
         if ($collection === null) {
             $collection = new PharInvocationCollection();
