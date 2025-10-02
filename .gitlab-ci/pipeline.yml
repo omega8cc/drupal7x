@@ -85,10 +85,12 @@ stages:
   - sudo -u www-data git config --global --add safe.directory $CI_PROJECT_DIR
 
 .install-drupal: &install-drupal
-  - sudo -u www-data /usr/local/bin/drush si -y --db-url=$SIMPLETEST_DB --clean-url=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+  - export PHP_OPTIONS="-d error_reporting=0"
+  - sudo -u www-data /usr/local/bin/drush si -y standard install_configure_form.update_status_module='array(FALSE,FALSE)' --db-url=$SIMPLETEST_DB --clean-url=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com || true
   - sudo -u www-data /usr/local/bin/drush vset simpletest_clear_results '0'
   - sudo -u www-data /usr/local/bin/drush vset simpletest_verbose '1'
   - sudo -u www-data /usr/local/bin/drush en -y simpletest
+  - unset PHP_OPTIONS
 
 .run-tests: &run-tests
   script:

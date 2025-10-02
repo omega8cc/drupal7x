@@ -4,3 +4,7 @@ core = 7.x
 
 hidden = TRUE
 package = Testing
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

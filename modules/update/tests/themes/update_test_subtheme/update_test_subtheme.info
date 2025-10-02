@@ -3,3 +3,7 @@ description = Test theme which uses update_test_basetheme as the base theme.
 core = 7.x
 base theme = update_test_basetheme
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

@@ -1,7 +1,11 @@
 name = System test
 description = Support module for system testing.
 package = Testing
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = system_test.module
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

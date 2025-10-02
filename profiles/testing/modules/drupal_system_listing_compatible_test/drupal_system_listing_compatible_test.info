@@ -1,7 +1,11 @@
 name = "Drupal system listing compatible test"
 description = "Support module for testing the drupal_system_listing function."
 package = Testing
-version = VERSION
+# version = VERSION
 core = 7.x
 hidden = TRUE
 files[] = drupal_system_listing_compatible_test.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

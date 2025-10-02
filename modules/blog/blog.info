@@ -1,6 +1,10 @@
 name = Blog
 description = Enables multi-user blogs.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = blog.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

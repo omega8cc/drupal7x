@@ -2,5 +2,9 @@ name = Toolbar
 description = Provides a toolbar that shows the top-level administration menu items and links from other modules.
 core = 7.x
 package = Core
-version = VERSION
+# version = VERSION
 files[] = toolbar.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

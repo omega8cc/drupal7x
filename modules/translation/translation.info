@@ -2,6 +2,10 @@ name = Content translation
 description = Allows content to be translated into different languages.
 dependencies[] = locale
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = translation.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

@@ -1,6 +1,6 @@
 name = Standard
 description = Install with commonly used features pre-configured.
-version = VERSION
+# version = VERSION
 core = 7.x
 dependencies[] = block
 dependencies[] = color
@@ -23,3 +23,7 @@ dependencies[] = overlay
 dependencies[] = field_ui
 dependencies[] = file
 dependencies[] = rdf
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

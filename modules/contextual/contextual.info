@@ -1,6 +1,10 @@
 name = Contextual links
 description = Provides contextual links to perform actions related to elements on a page.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = contextual.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

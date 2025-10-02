@@ -3,3 +3,7 @@ description = "Support module for Trigger tests."
 package = Testing
 core = 7.x
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

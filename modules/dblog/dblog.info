@@ -1,6 +1,10 @@
 name = Database logging
 description = Logs and records system events to the database.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = dblog.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

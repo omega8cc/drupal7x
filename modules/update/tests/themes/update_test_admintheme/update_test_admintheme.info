@@ -2,3 +2,7 @@ name = Update test admin theme
 description = Test theme which is used as admin theme.
 core = 7.x
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

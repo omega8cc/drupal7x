@@ -7,3 +7,6 @@ sites/*/drush/drushrc.php
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
+
+/vendor
+/.ddev

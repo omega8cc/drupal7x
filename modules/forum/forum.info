@@ -3,8 +3,12 @@ description = Provides discussion forums.
 dependencies[] = taxonomy
 dependencies[] = comment
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = forum.test
 configure = admin/structure/forum
 stylesheets[all][] = forum.css
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

@@ -1,7 +1,11 @@
 name = System Admin Test
 description = 'Support module for testing system.admin.inc.'
 package = Only For Testing
-version = VERSION
+# version = VERSION
 core = 7.x
 hidden = FALSE
 configure = config/broken
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

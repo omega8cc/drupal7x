@@ -1,7 +1,7 @@
 name = Profile
 description = Supports configurable user profiles.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = profile.test
 configure = admin/config/people/profile
@@ -10,3 +10,7 @@ configure = admin/config/people/profile
 ; are upgrading a site that uses the Profile module to extend user profiles.
 ; See user_system_info_alter().
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

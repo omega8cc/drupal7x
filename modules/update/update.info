@@ -1,7 +1,11 @@
 name = Update manager
 description = Checks for available updates, and can securely install or update modules and themes via a web interface.
-version = VERSION
+# version = VERSION
 package = Core
 core = 7.x
 files[] = update.test
 configure = admin/reports/updates/settings
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

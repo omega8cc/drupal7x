@@ -2,7 +2,7 @@
 name = Bartik
 description = A flexible, recolorable theme with many regions.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 
 stylesheets[all][] = css/layout.css
@@ -33,3 +33,7 @@ regions[footer] = Footer
 
 settings[shortcut_module_link] = 0
 
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

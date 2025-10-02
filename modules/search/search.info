@@ -1,9 +1,13 @@
 name = Search
 description = Enables site-wide keyword searching.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = search.extender.inc
 files[] = search.test
 configure = admin/config/search/settings
 stylesheets[all][] = search.css
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

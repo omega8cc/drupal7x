@@ -1,7 +1,11 @@
 name = Field UI
 description = User interface for the Field API.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 dependencies[] = field
 files[] = field_ui.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

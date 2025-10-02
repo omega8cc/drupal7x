@@ -3,6 +3,10 @@ description = "Tests that a module is not installed when the one it depends on f
 dependencies[] = requirements1_test
 dependencies[] = comment
 package = Testing
-version = VERSION
+# version = VERSION
 core = 7.x
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

@@ -1,8 +1,12 @@
 name = Text
 description = Defines simple text field types.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 dependencies[] = field
 files[] = text.test
 required = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

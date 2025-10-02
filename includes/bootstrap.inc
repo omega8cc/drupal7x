@@ -17,7 +17,7 @@ if (!defined('E_STRICT')) {
 /**
  * The current system version.
  */
-define('VERSION', '7.103');
+define('VERSION', '7.105');
 
 /**
  * Core API compatibility.
