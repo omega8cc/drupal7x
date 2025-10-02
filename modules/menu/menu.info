@@ -1,7 +1,11 @@
 name = Menu
 description = Allows administrators to customize the site navigation menu.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = menu.test
 configure = admin/structure/menu
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

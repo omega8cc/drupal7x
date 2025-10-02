@@ -1,6 +1,10 @@
 name = Help
 description = Manages the display of online help.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = help.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

@@ -1,8 +1,12 @@
 name = List
 description = Defines list field types. Use with Options to create selection lists.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 dependencies[] = field
 dependencies[] = options
 files[] = tests/list.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

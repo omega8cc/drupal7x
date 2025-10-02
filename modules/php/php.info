@@ -1,6 +1,10 @@
 name = PHP filter
 description = Allows embedded PHP code/snippets to be evaluated.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = php.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

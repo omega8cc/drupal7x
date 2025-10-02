@@ -3,3 +3,7 @@ description = Theme for testing the module-provided theme engines.
 core = 7.x
 hidden = TRUE
 engine = nyan_cat
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

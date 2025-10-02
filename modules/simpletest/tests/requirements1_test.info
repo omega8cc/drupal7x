@@ -1,6 +1,10 @@
 name = Requirements 1 Test
 description = "Tests that a module is not installed when it fails hook_requirements('install')."
 package = Testing
-version = VERSION
+# version = VERSION
 core = 7.x
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

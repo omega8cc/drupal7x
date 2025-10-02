@@ -1,6 +1,10 @@
 name = "User module session tests"
 description = "Support module for user session testing."
 package = Testing
-version = VERSION
+# version = VERSION
 core = 7.x
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

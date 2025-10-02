@@ -1,8 +1,12 @@
 name = Image
 description = Provides image manipulation tools.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 dependencies[] = file
 files[] = image.test
 configure = admin/config/media/image-styles
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

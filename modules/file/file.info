@@ -1,7 +1,11 @@
 name = File
 description = Defines a file field type.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 dependencies[] = field
 files[] = tests/file.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

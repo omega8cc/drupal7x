@@ -1,7 +1,11 @@
 name = Image test
 description = Provides hook implementations for testing Image module functionality.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = image_module_test.module
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

@@ -3,6 +3,10 @@ description = "Support module for testing the code registry."
 files[] = drupal_autoload_test_interface.inc
 files[] = drupal_autoload_test_class.inc
 package = Testing
-version = VERSION
+# version = VERSION
 core = 7.x
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

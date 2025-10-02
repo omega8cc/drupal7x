@@ -1,6 +1,10 @@
 name = Color
 description = Allows administrators to change the color scheme of compatible themes.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = color.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

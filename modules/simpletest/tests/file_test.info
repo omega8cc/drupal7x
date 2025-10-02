@@ -1,7 +1,11 @@
 name = "File test"
 description = "Support module for file handling tests."
 package = Testing
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = file_test.module
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

@@ -1,7 +1,7 @@
 name = Testing
 description = Provides a framework for unit and functional testing.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = simpletest.test
 files[] = drupal_web_test_case.php
@@ -57,3 +57,7 @@ files[] = tests/upgrade/update.aggregator.test
 files[] = tests/upgrade/update.trigger.test
 files[] = tests/upgrade/update.field.test
 files[] = tests/upgrade/update.user.test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

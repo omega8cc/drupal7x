@@ -1,8 +1,12 @@
 name = Filter
 description = Filters content in preparation for display.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = filter.test
 required = TRUE
 configure = admin/config/content/formats
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

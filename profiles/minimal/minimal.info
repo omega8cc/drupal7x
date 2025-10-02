@@ -1,6 +1,10 @@
 name = Minimal
 description = Start with only a few modules enabled.
-version = VERSION
+# version = VERSION
 core = 7.x
 dependencies[] = block
 dependencies[] = dblog
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

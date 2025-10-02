@@ -1,7 +1,11 @@
 name = Statistics
 description = Logs access statistics for your site.
 package = Core
-version = VERSION
+# version = VERSION
 core = 7.x
 files[] = statistics.test
 configure = admin/config/system/statistics
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

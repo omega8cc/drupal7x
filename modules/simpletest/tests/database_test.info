@@ -2,5 +2,9 @@ name = "Database Test"
 description = "Support module for Database layer tests."
 core = 7.x
 package = Testing
-version = VERSION
+# version = VERSION
 hidden = TRUE
+
+version = 7.105
+project = drupal
+datestamp = 1759347205

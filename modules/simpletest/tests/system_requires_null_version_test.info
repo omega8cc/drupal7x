@@ -2,6 +2,10 @@ name = "System requires null version test"
 description = "Support module for testing system_modules()."
 package = Only For Testing
 core = 7.x
-version = VERSION
+# version = VERSION
 hidden = FALSE
 dependencies[] = system_null_version_test
+
+version = 7.105
+project = drupal
+datestamp = 1759347205
