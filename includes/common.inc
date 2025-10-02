@@ -404,7 +404,7 @@ function drupal_get_feeds($delimiter = "\n") {
 /**
  * Processes a URL query parameter array to remove unwanted elements.
  *
- * @param $query
+ * @param array|null $query
  *   (optional) An array to be processed. Defaults to $_GET.
  * @param $exclude
  *   (optional) A list of $query array keys to remove. Use "parent[child]" to
@@ -415,7 +415,7 @@ function drupal_get_feeds($delimiter = "\n") {
  * @return
  *   An array containing query parameters, which can be used for url().
  */
-function drupal_get_query_parameters(array $query = NULL, array $exclude = array('q'), $parent = '') {
+function drupal_get_query_parameters($query = NULL, array $exclude = array('q'), $parent = '') {
   // Set defaults, if none given.
   if (!isset($query)) {
     $query = $_GET;
@@ -2170,9 +2170,11 @@ function date_iso8601($date) {
 /**
  * Translates a formatted date string.
  *
+ * @param array|null $matches
+ *
  * Callback for preg_replace_callback() within format_date().
  */
-function _format_date_callback(array $matches = NULL, $new_langcode = NULL) {
+function _format_date_callback($matches = NULL, $new_langcode = NULL) {
   // We cache translations to avoid redundant and rather costly calls to t().
   static $cache, $langcode;
 

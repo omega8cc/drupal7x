@@ -38,15 +38,15 @@ class Manager
     private $collection;
 
     /**
-     * @param Behavior $behaviour
-     * @param Resolvable $resolver
-     * @param Collectable $collection
+     * @param Behavior         $behaviour
+     * @param Resolvable|null  $resolver
+     * @param Collectable|null $collection
      * @return self
      */
     public static function initialize(
         Behavior $behaviour,
-        Resolvable $resolver = null,
-        Collectable $collection = null
+        $resolver = null,
+        $collection = null
     ) {
         if (self::$instance === null) {
             self::$instance = new self($behaviour, $resolver, $collection);
@@ -85,15 +85,22 @@ class Manager
     }
 
     /**
-     * @param Behavior $behaviour
-     * @param Resolvable $resolver
-     * @param Collectable $collection
+     * @param Behavior         $behaviour
+     * @param Resolvable|null  $resolver
+     * @param Collectable|null $collection
      */
     private function __construct(
         Behavior $behaviour,
-        Resolvable $resolver = null,
-        Collectable $collection = null
+        $resolver = null,
+        $collection = null
     ) {
+        // Optional runtime safety on older PHP:
+        if ($resolver !== null && !($resolver instanceof Resolvable)) {
+            throw new \InvalidArgumentException('Resolver must implement Resolvable or be null.');
+        }
+        if ($collection !== null && !($collection instanceof Collectable)) {
+            throw new \InvalidArgumentException('Collection must implement Collectable or be null.');
+        }
         if ($collection === null) {
             $collection = new PharInvocationCollection();
         }
