@@ -650,12 +650,23 @@ class DatabaseConnection_mysql extends DatabaseConnection {
 
     // Ensure that the MySQL server supports large prefixes and utf8mb4.
     try {
+      // A check interrupted between CREATE and DROP leaves the probe table
+      // behind, and it can then ride database dump/restore cycles; every
+      // later CREATE would fail "already exists", making this check report
+      // utf8mb4 as unsupported forever. Clear it so the probe self-heals.
+      $this->query("DROP TABLE IF EXISTS {drupal_utf8mb4_test}");
       $this->query("CREATE TABLE {drupal_utf8mb4_test} (id VARCHAR(255), PRIMARY KEY(id(255))) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ROW_FORMAT=DYNAMIC ENGINE=INNODB");
     }
     catch (Exception $e) {
       return FALSE;
     }
-    $this->query("DROP TABLE {drupal_utf8mb4_test}");
+    try {
+      $this->query("DROP TABLE IF EXISTS {drupal_utf8mb4_test}");
+    }
+    catch (Exception $e) {
+      // Cleanup failure is deliberately ignored: support itself was proven by
+      // the successful CREATE above, and the next check clears any residue.
+    }
     return TRUE;
   }
 }
