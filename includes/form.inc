@@ -1718,12 +1718,26 @@ function form_get_error($element) {
 
 /**
  * Flags an element as having an error.
+ *
+ * Also appends an invisible, focusable error anchor to the element's
+ * existing #prefix (once per element, tracked via the internal
+ * #form_error_anchor marker) and turns the message into a link to it.
  */
 function form_error(&$element, $message = '') {
-  $id = $element['#id'];
-  $element['#prefix'] = "<a id = '$id-error' class = 'element-invisible element-focusable'>$message</a>";
-  $link = l($message,current_path(), array("fragment" => "$id-error", 'absolute'=> TRUE, 'html'=>TRUE,));
-  form_set_error(implode('][', $element['#parents']), $link);
+  if (!empty($message) && !empty($element['#id'])) {
+    $id = $element['#id'];
+    // Append to any existing #prefix rather than overwriting it: theme
+    // wrappers commonly open a container there, and dropping it leaves the
+    // matching #suffix closing tag unbalanced. Add the anchor only once even
+    // if the element fails several validators.
+    if (empty($element['#form_error_anchor'])) {
+      $element['#prefix'] = (isset($element['#prefix']) ? $element['#prefix'] : '')
+        . "<a id='$id-error' class='element-invisible element-focusable'>$message</a>";
+      $element['#form_error_anchor'] = TRUE;
+    }
+    $message = l($message, current_path(), array('fragment' => "$id-error", 'absolute' => TRUE, 'html' => TRUE));
+  }
+  form_set_error(implode('][', $element['#parents']), $message);
 }
 
 /**
