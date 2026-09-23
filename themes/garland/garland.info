@@ -7,6 +7,6 @@ stylesheets[all][] = style.css
 stylesheets[print][] = print.css
 settings[garland_width] = fluid
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245

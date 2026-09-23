@@ -7,6 +7,6 @@ stylesheets[all][] = common_test.css
 stylesheets[print][] = common_test.print.css
 hidden = TRUE
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245

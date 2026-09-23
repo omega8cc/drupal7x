@@ -12,6 +12,6 @@ files[] = system.test
 required = TRUE
 configure = admin/config/system
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245

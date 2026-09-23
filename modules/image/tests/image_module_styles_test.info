@@ -7,6 +7,6 @@ files[] = image_module_styles_test.module
 dependencies[] = image_module_test
 hidden = TRUE
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245

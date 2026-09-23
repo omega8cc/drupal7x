@@ -58,6 +58,6 @@ files[] = tests/upgrade/update.trigger.test
 files[] = tests/upgrade/update.field.test
 files[] = tests/upgrade/update.user.test
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245

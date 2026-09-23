@@ -9,6 +9,6 @@ files[] = forum.test
 configure = admin/structure/forum
 stylesheets[all][] = forum.css
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245
