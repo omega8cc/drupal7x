@@ -1,5 +1,8 @@
 Drupal 7.xxx, xxxx-xx-xx (development version)
 ------------------------
+- Added lang beside xml:lang on the html element in core's html.tpl.php, which
+  Bartik, Garland and Seven inherit; themes that ship their own html.tpl.php
+  are unaffected
 
 Drupal 7.103, 2024-12-04
 ------------------------
