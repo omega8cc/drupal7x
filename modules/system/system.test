@@ -1027,19 +1027,18 @@ class AdminMetaTagTestCase extends DrupalWebTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Fingerprinting meta tag',
-      'description' => 'Confirm that the fingerprinting meta tag appears as expected.',
+      'description' => 'Confirm that no fingerprinting meta tag or header is sent.',
       'group' => 'System'
     );
   }
 
   /**
-   * Verify that the meta tag HTML is generated correctly.
+   * Verify that neither the meta tag nor the header is generated.
    */
   public function testMetaTag() {
-    list($version, ) = explode('.', VERSION);
-    $string = '<meta name="Generator" content="Drupal ' . $version . ' (http://drupal.org)" />';
     $this->drupalGet('node');
-    $this->assertRaw($string, 'Fingerprinting meta tag generated correctly.', 'System');
+    $this->assertNoRaw('<meta name="Generator"', 'No fingerprinting meta tag generated.', 'System');
+    $this->assertFalse($this->drupalGetHeader('X-Generator'), 'No fingerprinting header sent.', 'System');
   }
 }
 

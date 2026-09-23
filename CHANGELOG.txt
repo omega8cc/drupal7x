@@ -3,6 +3,9 @@ Drupal 7.xxx, xxxx-xx-xx (development version)
 - Added lang beside xml:lang on the html element in core's html.tpl.php, which
   Bartik, Garland and Seven inherit; themes that ship their own html.tpl.php
   are unaffected
+- Pages no longer carry the Generator meta tag or the X-Generator header, so
+  version scanners stop reporting this maintained core as unsupported Drupal 7;
+  a site can still add its own tag
 
 Drupal 7.103, 2024-12-04
 ------------------------
