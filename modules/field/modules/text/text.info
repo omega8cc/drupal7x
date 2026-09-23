@@ -7,6 +7,6 @@ dependencies[] = field
 files[] = text.test
 required = TRUE
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245
