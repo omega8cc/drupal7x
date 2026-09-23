@@ -7,6 +7,6 @@ dependencies[] = file
 files[] = image.test
 configure = admin/config/media/image-styles
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245

@@ -8,6 +8,6 @@ files[] = taxonomy.module
 files[] = taxonomy.test
 configure = admin/structure/taxonomy
 
-version = 7.105
+version = 7.106
 project = drupal
-datestamp = 1759347205
+datestamp = 1787164245
