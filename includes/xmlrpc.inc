@@ -60,7 +60,7 @@ function xmlrpc_value_calculate_type($xmlrpc_value) {
   if (is_bool($xmlrpc_value->data)) {
     return 'boolean';
   }
-  if (is_double($xmlrpc_value->data)) {
+  if (is_float($xmlrpc_value->data)) {
     return 'double';
   }
   if (is_int($xmlrpc_value->data)) {
@@ -311,7 +311,7 @@ function xmlrpc_message_tag_close($parser, $tag) {
       break;
 
     case 'double':
-      $value = (double)trim($xmlrpc_message->current_tag_contents);
+      $value = (float)trim($xmlrpc_message->current_tag_contents);
       $value_flag = TRUE;
       break;
 
@@ -337,7 +337,7 @@ function xmlrpc_message_tag_close($parser, $tag) {
       break;
 
     case 'boolean':
-      $value = (boolean)trim($xmlrpc_message->current_tag_contents);
+      $value = (bool)trim($xmlrpc_message->current_tag_contents);
       $value_flag = TRUE;
       break;
 

@@ -115,7 +115,7 @@ class CommentHelperCase extends DrupalWebTestCase {
       $regex .= $comment->comment . '(.*?)'; // Match comment.
       $regex .= '/s';
 
-      return (boolean)preg_match($regex, $this->drupalGetContent());
+      return (bool)preg_match($regex, $this->drupalGetContent());
     }
     else {
       return FALSE;

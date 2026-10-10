@@ -4118,7 +4118,7 @@ class DatabaseTransactionTestCase extends DatabaseTestCase {
     if (!isset($message)) {
       $message = format_string('Row %name is present.', array('%name' => $name));
     }
-    $present = (boolean) db_query('SELECT 1 FROM {test} WHERE name = :name', array(':name' => $name))->fetchField();
+    $present = (bool) db_query('SELECT 1 FROM {test} WHERE name = :name', array(':name' => $name))->fetchField();
     return $this->assertTrue($present, $message);
   }
 
@@ -4134,7 +4134,7 @@ class DatabaseTransactionTestCase extends DatabaseTestCase {
     if (!isset($message)) {
       $message = format_string('Row %name is absent.', array('%name' => $name));
     }
-    $present = (boolean) db_query('SELECT 1 FROM {test} WHERE name = :name', array(':name' => $name))->fetchField();
+    $present = (bool) db_query('SELECT 1 FROM {test} WHERE name = :name', array(':name' => $name))->fetchField();
     return $this->assertFalse($present, $message);
   }
 
