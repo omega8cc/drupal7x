@@ -72,9 +72,14 @@ define('FILE_STATUS_PERMANENT', 1);
 /**
  * A pipe-separated list of insecure extensions.
  *
- * @see file_munge_filename(), file_save_upload()
+ * Uploads with these extensions are renamed or refused unless the
+ * 'allow_insecure_uploads' variable is set. The list follows Backdrop's
+ * (Security #292): every PHP alias a web server may hand to PHP, scripts
+ * other servers run, server-side includes and Drupal's own code files.
+ *
+ * @see file_munge_filename(), file_save_upload(), file_validate()
  */
-define('FILE_INSECURE_EXTENSIONS', 'php|phar|pl|py|cgi|asp|js|phtml');
+define('FILE_INSECURE_EXTENSIONS', 'php|phar|pl|py|cgi|asp|js|phtml|ctp|hphp|htaccess|inc|module|php2|php3|php4|php5|php6|php7|php8|phps|pht|phtm|pgif|shtml');
 
 /**
  * Provides Drupal stream wrapper registry.

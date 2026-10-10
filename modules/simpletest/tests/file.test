@@ -2881,6 +2881,25 @@ class FileNameMungingTest extends FileTestCase {
   }
 
   /**
+   * Tests that the PHP aliases and the other script and code extensions are
+   * munged and refused like php.
+   */
+  public function testMungeUnsafeAliases() {
+    $prefix = $this->randomName();
+    foreach (array('pht', 'phps', 'php5', 'php7', 'phtm', 'shtml', 'inc', 'ctp', 'hphp', 'pgif') as $extension) {
+      $name = "$prefix.$extension.txt";
+      $munged_name = file_munge_filename($name, "$extension txt", FALSE);
+      $this->assertIdentical($munged_name, "$prefix.{$extension}_.txt", format_string('The filename (%munged) has been modified from the original (%original) for the unsafe extension %extension.', array('%munged' => $munged_name, '%original' => $name, '%extension' => $extension)));
+    }
+    foreach (array('test.pht', 'test.php5', 'test.module', 'test.htaccess', 'test.shtml') as $filename) {
+      $file = new stdClass();
+      $file->filename = $filename;
+      $errors = file_validate($file, array());
+      $this->assertEqual('For security reasons, your upload has been rejected.', reset($errors), format_string('%filename is refused.', array('%filename' => $filename)));
+    }
+  }
+
+  /**
    * Ensure that unmunge gets your name back.
    */
   function testUnMunge() {
