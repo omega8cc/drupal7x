@@ -903,7 +903,7 @@ function _block_render_blocks($region_blocks) {
       $cid = empty($cids[$key]) ? NULL : $cids[$key];
 
       // Try fetching the block from the previously loaded cache entries.
-      if (isset($cached_blocks[$cid])) {
+      if (isset($cid) && isset($cached_blocks[$cid])) {
         $array = $cached_blocks[$cid]->data;
       }
       else {

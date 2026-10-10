@@ -1003,12 +1003,12 @@ class SelectQuery extends Query implements SelectQueryInterface {
 
   public function hasAllTags() {
     $args = func_get_args();
-    return !(boolean)array_diff($args, array_keys($this->alterTags));
+    return !(bool)array_diff($args, array_keys($this->alterTags));
   }
 
   public function hasAnyTag() {
     $args = func_get_args();
-    return (boolean)array_intersect($args, array_keys($this->alterTags));
+    return (bool)array_intersect($args, array_keys($this->alterTags));
   }
 
   public function addMetaData($key, $object) {

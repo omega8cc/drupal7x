@@ -272,6 +272,14 @@ if (!defined('DATE_RFC7231')) {
 }
 
 /**
+ * The same HTTP date format, under Drupal's own name.
+ *
+ * PHP 8.5 deprecates its DATE_RFC7231 constant, so core formats HTTP dates
+ * with this one; DATE_RFC7231 stays defined above for contributed code.
+ */
+define('DRUPAL_DATE_RFC7231', 'D, d M Y H:i:s \G\M\T');
+
+/**
  * Provides a caching wrapper to be used in place of large array structures.
  *
  * This class should be extended by systems that need to cache large amounts
@@ -1664,7 +1672,7 @@ function drupal_serve_page_from_cache(stdClass $cache) {
     drupal_add_http_header($name, $value);
   }
 
-  $default_headers['Last-Modified'] = gmdate(DATE_RFC7231, $cache->created);
+  $default_headers['Last-Modified'] = gmdate(DRUPAL_DATE_RFC7231, $cache->created);
 
   // HTTP/1.0 proxies does not support the Vary header, so prevent any caching
   // by sending an Expires date in the past. HTTP/1.1 clients ignores the

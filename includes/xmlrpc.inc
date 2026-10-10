@@ -311,7 +311,7 @@ function xmlrpc_message_tag_close($parser, $tag) {
       break;
 
     case 'double':
-      $value = (double)trim($xmlrpc_message->current_tag_contents);
+      $value = (float)trim($xmlrpc_message->current_tag_contents);
       $value_flag = TRUE;
       break;
 
@@ -337,7 +337,7 @@ function xmlrpc_message_tag_close($parser, $tag) {
       break;
 
     case 'boolean':
-      $value = (boolean)trim($xmlrpc_message->current_tag_contents);
+      $value = (bool)trim($xmlrpc_message->current_tag_contents);
       $value_flag = TRUE;
       break;
 

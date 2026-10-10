@@ -1,5 +1,11 @@
 Drupal 7.xxx, xxxx-xx-xx (development version)
 ------------------------
+- PHP 8.5 and 8.6 deprecations that can be fixed without leaving PHP 5.6: the
+  non-canonical casts, PHP's deprecated DATE_RFC7231 constant (core now uses
+  DRUPAL_DATE_RFC7231; DATE_RFC7231 stays defined for contributed code), a null
+  array offset on every page with blocks, and the values Archive_Tar's
+  constructor returned; the implicitly nullable parameters stay, since dropping
+  their type hints would break contributed code that implements them
 - Uploads refuse or rename the PHP aliases (pht, phps, php2 to php8, phtm),
   server-side includes (shtml), other script types (ctp, hphp, pgif),
   .htaccess and Drupal's own code files (inc, module), as Backdrop's Security
