@@ -60,7 +60,7 @@ function xmlrpc_value_calculate_type($xmlrpc_value) {
   if (is_bool($xmlrpc_value->data)) {
     return 'boolean';
   }
-  if (is_double($xmlrpc_value->data)) {
+  if (is_float($xmlrpc_value->data)) {
     return 'double';
   }
   if (is_int($xmlrpc_value->data)) {
