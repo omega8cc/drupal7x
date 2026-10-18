@@ -1,5 +1,10 @@
 Drupal 7.xxx, xxxx-xx-xx (development version)
 ------------------------
+- The node access check on a joined node table (a Views relationship, any
+  LEFT JOIN of node in a query tagged node_access) runs with its own values:
+  its placeholders shared names with the outer query's, whose values won, so
+  the joined node's fields came back empty for logins without 'bypass node
+  access', or passed by chance
 - PHP 8.5 and 8.6 deprecations that can be fixed without leaving PHP 5.6: the
   non-canonical casts, the is_integer() and is_double() aliases (PHP 8.6),
   PHP's deprecated DATE_RFC7231 constant (core now uses

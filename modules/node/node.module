@@ -3475,9 +3475,21 @@ function _node_query_node_access_alter($query, $type) {
         }
         else {
           // If we are looking at a joined table, add the node access check
-          // to the join condition.
-          $tables[$nalias]['condition'] .= ' AND EXISTS(' . (string)$subquery . ')';
-          $tables[$nalias]['arguments'] += $subquery->arguments();
+          // to the join condition. The subquery compiles on its own, so its
+          // placeholders restart at :db_condition_placeholder_0 and collide
+          // with the outer query's, whose values win the merge: rename them
+          // per joined table.
+          $subquery_sql = (string) $subquery;
+          $prefix = ':node_access_' . preg_replace('/[^A-Za-z0-9_]/', '', $nalias) . '_';
+          $renamed = array();
+          $arguments = array();
+          foreach ($subquery->arguments() as $placeholder => $value) {
+            $renamed[$placeholder] = $prefix . ltrim($placeholder, ':');
+            $arguments[$renamed[$placeholder]] = $value;
+          }
+          // strtr() replaces the longest key first, so _1 never eats _10.
+          $tables[$nalias]['condition'] .= ' AND EXISTS(' . strtr($subquery_sql, $renamed) . ')';
+          $tables[$nalias]['arguments'] += $arguments;
         }
       }
     }
