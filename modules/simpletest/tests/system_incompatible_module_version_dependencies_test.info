@@ -7,6 +7,6 @@ hidden = TRUE
 ; system_incompatible_module_version_test declares version 1.0
 dependencies[] = system_incompatible_module_version_test (>2.0)
 
-version = 7.106
+version = 7.108
 project = drupal
-datestamp = 1787164245
+datestamp = 1793819061
