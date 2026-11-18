@@ -4,6 +4,6 @@ package = Core
 # version = VERSION
 core = 7.x
 
-version = 7.106
+version = 7.108
 project = drupal
-datestamp = 1787164245
+datestamp = 1793819061
